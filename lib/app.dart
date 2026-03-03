@@ -1,0 +1,28 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recur/core/router/app_router.dart';
+import 'package:recur/core/theme/app_theme.dart';
+import 'package:recur/features/settings/providers/settings_provider.dart';
+
+class RecurApp extends ConsumerWidget {
+  const RecurApp({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+
+    final themeMode = settings.whenOrNull(
+          data: (s) => s.themeMode,
+        ) ??
+        ThemeMode.system;
+
+    return MaterialApp.router(
+      title: 'Recur',
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: themeMode,
+      routerConfig: appRouter,
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
