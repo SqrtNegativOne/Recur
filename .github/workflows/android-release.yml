@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (e.g. v1.0.0)"
+        required: true
+        default: "v1.0.0"
 
 jobs:
   build:
@@ -30,38 +36,22 @@ jobs:
       - name: Run code generation
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Decode keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/recur.jks
+      - name: Build APK
+        run: flutter build apk --release
 
-      - name: Build signed APK
-        env:
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+      - name: Rename APK
         run: |
-          flutter build apk --release \
-            --dart-define=STORE_PASSWORD=$STORE_PASSWORD \
-            --dart-define=KEY_PASSWORD=$KEY_PASSWORD \
-            --dart-define=KEY_ALIAS=$KEY_ALIAS
-
-      - name: Sign APK
-        env:
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-        run: |
-          $ANDROID_SDK_ROOT/build-tools/$(ls $ANDROID_SDK_ROOT/build-tools | sort -V | tail -1)/apksigner sign \
-            --ks android/app/recur.jks \
-            --ks-key-alias "$KEY_ALIAS" \
-            --ks-pass "pass:$STORE_PASSWORD" \
-            --key-pass "pass:$KEY_PASSWORD" \
-            --out build/app/outputs/flutter-apk/recur-${{ github.ref_name }}.apk \
-            build/app/outputs/flutter-apk/app-release.apk
+          TAG="${{ github.ref_name }}"
+          if [ "$TAG" = "" ] || [ "$TAG" = "refs/heads/${{ github.ref_name }}" ]; then
+            TAG="${{ github.event.inputs.tag }}"
+          fi
+          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/recur-${TAG}.apk
+          echo "APK_TAG=${TAG}" >> $GITHUB_ENV
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Recur ${{ github.ref_name }}
-          files: build/app/outputs/flutter-apk/recur-${{ github.ref_name }}.apk
+          tag_name: ${{ env.APK_TAG }}
+          name: Recur ${{ env.APK_TAG }}
+          files: build/app/outputs/flutter-apk/recur-${{ env.APK_TAG }}.apk
           generate_release_notes: true
