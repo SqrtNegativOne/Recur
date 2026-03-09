@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - "v*.*.*"
+    branches:
+      - "claude/android-apk-workflow-61V3x"
+  workflow_dispatch:
 
 jobs:
   build:
@@ -30,38 +33,25 @@ jobs:
       - name: Run code generation
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Decode keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/recur.jks
+      - name: Build APK
+        run: flutter build apk --release
 
-      - name: Build signed APK
-        env:
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+      - name: Determine release tag
+        id: tag
         run: |
-          flutter build apk --release \
-            --dart-define=STORE_PASSWORD=$STORE_PASSWORD \
-            --dart-define=KEY_PASSWORD=$KEY_PASSWORD \
-            --dart-define=KEY_ALIAS=$KEY_ALIAS
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=v1.0.0" >> $GITHUB_OUTPUT
+          fi
 
-      - name: Sign APK
-        env:
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-        run: |
-          $ANDROID_SDK_ROOT/build-tools/$(ls $ANDROID_SDK_ROOT/build-tools | sort -V | tail -1)/apksigner sign \
-            --ks android/app/recur.jks \
-            --ks-key-alias "$KEY_ALIAS" \
-            --ks-pass "pass:$STORE_PASSWORD" \
-            --key-pass "pass:$KEY_PASSWORD" \
-            --out build/app/outputs/flutter-apk/recur-${{ github.ref_name }}.apk \
-            build/app/outputs/flutter-apk/app-release.apk
+      - name: Rename APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/recur-${{ steps.tag.outputs.tag }}.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Recur ${{ github.ref_name }}
-          files: build/app/outputs/flutter-apk/recur-${{ github.ref_name }}.apk
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: Recur ${{ steps.tag.outputs.tag }}
+          files: build/app/outputs/flutter-apk/recur-${{ steps.tag.outputs.tag }}.apk
           generate_release_notes: true
