@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:recur/core/utils/duration_formatter.dart';
@@ -54,6 +55,11 @@ class _DetailContent extends ConsumerWidget {
             icon: const Icon(Icons.edit),
             onPressed: () => context.push('/checklist/${checklist.id}/edit'),
             tooltip: 'Edit checklist',
+          ),
+          IconButton(
+            icon: const Icon(Icons.link),
+            tooltip: 'Copy Tasker URL',
+            onPressed: () => _copyTaskerUrl(context),
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
@@ -143,6 +149,17 @@ class _DetailContent extends ConsumerWidget {
             child: const Icon(Icons.add),
           ),
         ],
+      ),
+    );
+  }
+
+  void _copyTaskerUrl(BuildContext context) {
+    final url = 'recur:///run/${checklist.id}';
+    Clipboard.setData(ClipboardData(text: url));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Copied: $url'),
+        duration: const Duration(seconds: 3),
       ),
     );
   }

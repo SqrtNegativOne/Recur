@@ -13,6 +13,7 @@ A Routinery-inspired checklist timer app for **Windows** and **Android**. Create
 - **File-based storage** — Each checklist is a JSON file; point the app at any folder (e.g. a Syncthing-shared directory)
 - **Syncthing-aware** — Conflict files are filtered out when loading
 - **Theming** — Light, dark, or system theme
+- **Tasker integration** — Launch any checklist run via deep link (`recur:///run/<id>`)
 
 ## Platforms
 
@@ -117,6 +118,30 @@ lib/
 | `file_picker` | Storage folder selection |
 | `shared_preferences` | Settings persistence |
 | `wakelock_plus` | Prevent screen sleep during runs |
+
+## Tasker Integration (Android)
+
+You can trigger a specific checklist run directly from [Tasker](https://tasker.joaoapps.com/) using a deep link.
+
+### Setup
+
+1. Open the checklist you want to automate in Recur
+2. Tap the **link icon (🔗)** in the top app bar — this copies the deep link URL to your clipboard
+3. In Tasker, create a task → **Action → App → Browse URL** → paste the URL
+
+The URL format is:
+
+```
+recur:///run/<checklist-id>
+```
+
+For example: `recur:///run/a1b2c3def456`
+
+### Notes
+
+- The app will launch and immediately start the timer for that checklist
+- If the app is already open, it navigates directly to the run screen without restarting the app
+- The triple-slash (`///`) is required — `recur://run/...` (two slashes) will not work
 
 ## Storage
 

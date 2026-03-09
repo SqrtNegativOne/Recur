@@ -10,6 +10,12 @@ import 'package:recur/features/settings/presentation/screens/settings_screen.dar
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
+    // Short deep-link redirect used by Tasker: recur:///run/<id>
+    GoRoute(
+      path: '/run/:id',
+      redirect: (context, state) =>
+          '/checklist/${state.pathParameters['id']}/run',
+    ),
     GoRoute(
       path: '/',
       builder: (context, state) => const ChecklistListScreen(),
