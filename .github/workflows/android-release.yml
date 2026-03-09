@@ -8,6 +8,9 @@ on:
       - "claude/android-apk-workflow-61V3x"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -54,4 +57,4 @@ jobs:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: Recur ${{ steps.tag.outputs.tag }}
           files: build/app/outputs/flutter-apk/recur-${{ steps.tag.outputs.tag }}.apk
-          generate_release_notes: true
+          generate_release_notes: false
