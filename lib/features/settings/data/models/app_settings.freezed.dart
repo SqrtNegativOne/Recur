@@ -24,6 +24,8 @@ mixin _$AppSettings {
   String get storageFolderPath => throw _privateConstructorUsedError;
   @ThemeModeConverter()
   ThemeMode get themeMode => throw _privateConstructorUsedError;
+  bool get soundEnabled => throw _privateConstructorUsedError;
+  bool get ttsEnabled => throw _privateConstructorUsedError;
 
   /// Serializes this AppSettings to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -45,6 +47,8 @@ abstract class $AppSettingsCopyWith<$Res> {
   $Res call({
     String storageFolderPath,
     @ThemeModeConverter() ThemeMode themeMode,
+    bool soundEnabled,
+    bool ttsEnabled,
   });
 }
 
@@ -62,7 +66,12 @@ class _$AppSettingsCopyWithImpl<$Res, $Val extends AppSettings>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? storageFolderPath = null, Object? themeMode = null}) {
+  $Res call({
+    Object? storageFolderPath = null,
+    Object? themeMode = null,
+    Object? soundEnabled = null,
+    Object? ttsEnabled = null,
+  }) {
     return _then(
       _value.copyWith(
             storageFolderPath:
@@ -75,6 +84,16 @@ class _$AppSettingsCopyWithImpl<$Res, $Val extends AppSettings>
                     ? _value.themeMode
                     : themeMode // ignore: cast_nullable_to_non_nullable
                         as ThemeMode,
+            soundEnabled:
+                null == soundEnabled
+                    ? _value.soundEnabled
+                    : soundEnabled // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            ttsEnabled:
+                null == ttsEnabled
+                    ? _value.ttsEnabled
+                    : ttsEnabled // ignore: cast_nullable_to_non_nullable
+                        as bool,
           )
           as $Val,
     );
@@ -93,6 +112,8 @@ abstract class _$$AppSettingsImplCopyWith<$Res>
   $Res call({
     String storageFolderPath,
     @ThemeModeConverter() ThemeMode themeMode,
+    bool soundEnabled,
+    bool ttsEnabled,
   });
 }
 
@@ -109,7 +130,12 @@ class __$$AppSettingsImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? storageFolderPath = null, Object? themeMode = null}) {
+  $Res call({
+    Object? storageFolderPath = null,
+    Object? themeMode = null,
+    Object? soundEnabled = null,
+    Object? ttsEnabled = null,
+  }) {
     return _then(
       _$AppSettingsImpl(
         storageFolderPath:
@@ -122,6 +148,16 @@ class __$$AppSettingsImplCopyWithImpl<$Res>
                 ? _value.themeMode
                 : themeMode // ignore: cast_nullable_to_non_nullable
                     as ThemeMode,
+        soundEnabled:
+            null == soundEnabled
+                ? _value.soundEnabled
+                : soundEnabled // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        ttsEnabled:
+            null == ttsEnabled
+                ? _value.ttsEnabled
+                : ttsEnabled // ignore: cast_nullable_to_non_nullable
+                    as bool,
       ),
     );
   }
@@ -133,6 +169,8 @@ class _$AppSettingsImpl implements _AppSettings {
   const _$AppSettingsImpl({
     this.storageFolderPath = '',
     @ThemeModeConverter() this.themeMode = ThemeMode.system,
+    this.soundEnabled = true,
+    this.ttsEnabled = false,
   });
 
   factory _$AppSettingsImpl.fromJson(Map<String, dynamic> json) =>
@@ -145,10 +183,16 @@ class _$AppSettingsImpl implements _AppSettings {
   @JsonKey()
   @ThemeModeConverter()
   final ThemeMode themeMode;
+  @override
+  @JsonKey()
+  final bool soundEnabled;
+  @override
+  @JsonKey()
+  final bool ttsEnabled;
 
   @override
   String toString() {
-    return 'AppSettings(storageFolderPath: $storageFolderPath, themeMode: $themeMode)';
+    return 'AppSettings(storageFolderPath: $storageFolderPath, themeMode: $themeMode, soundEnabled: $soundEnabled, ttsEnabled: $ttsEnabled)';
   }
 
   @override
@@ -159,12 +203,22 @@ class _$AppSettingsImpl implements _AppSettings {
             (identical(other.storageFolderPath, storageFolderPath) ||
                 other.storageFolderPath == storageFolderPath) &&
             (identical(other.themeMode, themeMode) ||
-                other.themeMode == themeMode));
+                other.themeMode == themeMode) &&
+            (identical(other.soundEnabled, soundEnabled) ||
+                other.soundEnabled == soundEnabled) &&
+            (identical(other.ttsEnabled, ttsEnabled) ||
+                other.ttsEnabled == ttsEnabled));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, storageFolderPath, themeMode);
+  int get hashCode => Object.hash(
+    runtimeType,
+    storageFolderPath,
+    themeMode,
+    soundEnabled,
+    ttsEnabled,
+  );
 
   /// Create a copy of AppSettings
   /// with the given fields replaced by the non-null parameter values.
@@ -184,6 +238,8 @@ abstract class _AppSettings implements AppSettings {
   const factory _AppSettings({
     final String storageFolderPath,
     @ThemeModeConverter() final ThemeMode themeMode,
+    final bool soundEnabled,
+    final bool ttsEnabled,
   }) = _$AppSettingsImpl;
 
   factory _AppSettings.fromJson(Map<String, dynamic> json) =
@@ -194,6 +250,10 @@ abstract class _AppSettings implements AppSettings {
   @override
   @ThemeModeConverter()
   ThemeMode get themeMode;
+  @override
+  bool get soundEnabled;
+  @override
+  bool get ttsEnabled;
 
   /// Create a copy of AppSettings
   /// with the given fields replaced by the non-null parameter values.

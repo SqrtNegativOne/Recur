@@ -15,6 +15,8 @@ class RunState with _$RunState {
     @Default(0) int currentTaskIndex,
     @Default(0) int elapsedSeconds,
     @Default(RunPhase.idle) RunPhase phase,
+    DateTime? startedAt,
+    @Default([]) List<int> taskElapsedTimes,
   }) = _RunState;
 
   /// The currently active task, or null if index is out of range.

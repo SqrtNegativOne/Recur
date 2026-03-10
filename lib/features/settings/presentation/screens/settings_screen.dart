@@ -72,6 +72,30 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
               const Divider(),
+              // Sound effects toggle
+              SwitchListTile(
+                secondary: const Icon(Icons.volume_up_outlined),
+                title: const Text('Timer Sound'),
+                subtitle:
+                    const Text('Play a chime when a task timer expires'),
+                value: settings.soundEnabled,
+                onChanged: (value) {
+                  ref.read(settingsProvider.notifier).setSoundEnabled(value);
+                },
+              ),
+              const Divider(),
+              // TTS toggle
+              SwitchListTile(
+                secondary: const Icon(Icons.record_voice_over_outlined),
+                title: const Text('Voice Prompts'),
+                subtitle: const Text(
+                    'Announce each task with "Get X done in Y"'),
+                value: settings.ttsEnabled,
+                onChanged: (value) {
+                  ref.read(settingsProvider.notifier).setTtsEnabled(value);
+                },
+              ),
+              const Divider(),
               // Reset storage path
               if (settings.storageFolderPath.isNotEmpty)
                 ListTile(

@@ -16,6 +16,11 @@ class ChecklistListScreen extends ConsumerWidget {
         title: const Text('Recur'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () => context.push('/history'),
+            tooltip: 'Run History',
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () => context.push('/settings'),
             tooltip: 'Settings',

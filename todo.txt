@@ -2,4 +2,4 @@ Future features (deferred from MVP):
 
 - Audio / sound effects: play a notification sound when a task timer expires
 - Run history / stats: track how long each run took, show averages, streaks, etc.
-- Scheduling / reminders: set specific times or days for checklists to remind you
+- TTS voice that reminds you with voice: "Get X done in Y seconds/minutes" per reasonable seconds/minutes depending on how long the task in the checklist goes.

@@ -21,6 +21,8 @@ mixin _$RunState {
   int get currentTaskIndex => throw _privateConstructorUsedError;
   int get elapsedSeconds => throw _privateConstructorUsedError;
   RunPhase get phase => throw _privateConstructorUsedError;
+  DateTime? get startedAt => throw _privateConstructorUsedError;
+  List<int> get taskElapsedTimes => throw _privateConstructorUsedError;
 
   /// Create a copy of RunState
   /// with the given fields replaced by the non-null parameter values.
@@ -39,6 +41,8 @@ abstract class $RunStateCopyWith<$Res> {
     int currentTaskIndex,
     int elapsedSeconds,
     RunPhase phase,
+    DateTime? startedAt,
+    List<int> taskElapsedTimes,
   });
 
   $ChecklistModelCopyWith<$Res> get checklist;
@@ -63,6 +67,8 @@ class _$RunStateCopyWithImpl<$Res, $Val extends RunState>
     Object? currentTaskIndex = null,
     Object? elapsedSeconds = null,
     Object? phase = null,
+    Object? startedAt = freezed,
+    Object? taskElapsedTimes = null,
   }) {
     return _then(
       _value.copyWith(
@@ -86,6 +92,16 @@ class _$RunStateCopyWithImpl<$Res, $Val extends RunState>
                     ? _value.phase
                     : phase // ignore: cast_nullable_to_non_nullable
                         as RunPhase,
+            startedAt:
+                freezed == startedAt
+                    ? _value.startedAt
+                    : startedAt // ignore: cast_nullable_to_non_nullable
+                        as DateTime?,
+            taskElapsedTimes:
+                null == taskElapsedTimes
+                    ? _value.taskElapsedTimes
+                    : taskElapsedTimes // ignore: cast_nullable_to_non_nullable
+                        as List<int>,
           )
           as $Val,
     );
@@ -116,6 +132,8 @@ abstract class _$$RunStateImplCopyWith<$Res>
     int currentTaskIndex,
     int elapsedSeconds,
     RunPhase phase,
+    DateTime? startedAt,
+    List<int> taskElapsedTimes,
   });
 
   @override
@@ -140,6 +158,8 @@ class __$$RunStateImplCopyWithImpl<$Res>
     Object? currentTaskIndex = null,
     Object? elapsedSeconds = null,
     Object? phase = null,
+    Object? startedAt = freezed,
+    Object? taskElapsedTimes = null,
   }) {
     return _then(
       _$RunStateImpl(
@@ -163,6 +183,16 @@ class __$$RunStateImplCopyWithImpl<$Res>
                 ? _value.phase
                 : phase // ignore: cast_nullable_to_non_nullable
                     as RunPhase,
+        startedAt:
+            freezed == startedAt
+                ? _value.startedAt
+                : startedAt // ignore: cast_nullable_to_non_nullable
+                    as DateTime?,
+        taskElapsedTimes:
+            null == taskElapsedTimes
+                ? _value._taskElapsedTimes
+                : taskElapsedTimes // ignore: cast_nullable_to_non_nullable
+                    as List<int>,
       ),
     );
   }
@@ -176,7 +206,10 @@ class _$RunStateImpl extends _RunState {
     this.currentTaskIndex = 0,
     this.elapsedSeconds = 0,
     this.phase = RunPhase.idle,
-  }) : super._();
+    this.startedAt,
+    final List<int> taskElapsedTimes = const [],
+  }) : _taskElapsedTimes = taskElapsedTimes,
+       super._();
 
   @override
   final ChecklistModel checklist;
@@ -189,10 +222,21 @@ class _$RunStateImpl extends _RunState {
   @override
   @JsonKey()
   final RunPhase phase;
+  @override
+  final DateTime? startedAt;
+  final List<int> _taskElapsedTimes;
+  @override
+  @JsonKey()
+  List<int> get taskElapsedTimes {
+    if (_taskElapsedTimes is EqualUnmodifiableListView)
+      return _taskElapsedTimes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_taskElapsedTimes);
+  }
 
   @override
   String toString() {
-    return 'RunState(checklist: $checklist, currentTaskIndex: $currentTaskIndex, elapsedSeconds: $elapsedSeconds, phase: $phase)';
+    return 'RunState(checklist: $checklist, currentTaskIndex: $currentTaskIndex, elapsedSeconds: $elapsedSeconds, phase: $phase, startedAt: $startedAt, taskElapsedTimes: $taskElapsedTimes)';
   }
 
   @override
@@ -206,7 +250,13 @@ class _$RunStateImpl extends _RunState {
                 other.currentTaskIndex == currentTaskIndex) &&
             (identical(other.elapsedSeconds, elapsedSeconds) ||
                 other.elapsedSeconds == elapsedSeconds) &&
-            (identical(other.phase, phase) || other.phase == phase));
+            (identical(other.phase, phase) || other.phase == phase) &&
+            (identical(other.startedAt, startedAt) ||
+                other.startedAt == startedAt) &&
+            const DeepCollectionEquality().equals(
+              other._taskElapsedTimes,
+              _taskElapsedTimes,
+            ));
   }
 
   @override
@@ -216,6 +266,8 @@ class _$RunStateImpl extends _RunState {
     currentTaskIndex,
     elapsedSeconds,
     phase,
+    startedAt,
+    const DeepCollectionEquality().hash(_taskElapsedTimes),
   );
 
   /// Create a copy of RunState
@@ -233,6 +285,8 @@ abstract class _RunState extends RunState {
     final int currentTaskIndex,
     final int elapsedSeconds,
     final RunPhase phase,
+    final DateTime? startedAt,
+    final List<int> taskElapsedTimes,
   }) = _$RunStateImpl;
   const _RunState._() : super._();
 
@@ -244,6 +298,10 @@ abstract class _RunState extends RunState {
   int get elapsedSeconds;
   @override
   RunPhase get phase;
+  @override
+  DateTime? get startedAt;
+  @override
+  List<int> get taskElapsedTimes;
 
   /// Create a copy of RunState
   /// with the given fields replaced by the non-null parameter values.

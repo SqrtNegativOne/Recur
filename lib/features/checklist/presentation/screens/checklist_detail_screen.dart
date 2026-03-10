@@ -57,6 +57,12 @@ class _DetailContent extends ConsumerWidget {
             tooltip: 'Edit checklist',
           ),
           IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Run History',
+            onPressed: () => context.push(
+                '/checklist/${checklist.id}/history?name=${Uri.encodeComponent(checklist.name)}'),
+          ),
+          IconButton(
             icon: const Icon(Icons.link),
             tooltip: 'Copy Tasker URL',
             onPressed: () => _copyTaskerUrl(context),

@@ -14,3 +14,14 @@ String formatDurationHuman(int totalSeconds) {
   if (seconds == 0) return '${minutes}m';
   return '${minutes}m ${seconds}s';
 }
+
+/// Formats a duration for display in history, like "12:34" for hours:minutes
+/// or "2:05" for minutes:seconds.
+String formatDurationLong(int totalSeconds) {
+  if (totalSeconds >= 3600) {
+    final hours = totalSeconds ~/ 3600;
+    final minutes = (totalSeconds % 3600) ~/ 60;
+    return '${hours}h ${minutes}m';
+  }
+  return formatDurationHuman(totalSeconds);
+}

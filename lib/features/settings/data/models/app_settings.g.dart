@@ -15,10 +15,14 @@ _$AppSettingsImpl _$$AppSettingsImplFromJson(Map<String, dynamic> json) =>
               : const ThemeModeConverter().fromJson(
                 json['themeMode'] as String,
               ),
+      soundEnabled: json['soundEnabled'] as bool? ?? true,
+      ttsEnabled: json['ttsEnabled'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$AppSettingsImplToJson(_$AppSettingsImpl instance) =>
     <String, dynamic>{
       'storageFolderPath': instance.storageFolderPath,
       'themeMode': const ThemeModeConverter().toJson(instance.themeMode),
+      'soundEnabled': instance.soundEnabled,
+      'ttsEnabled': instance.ttsEnabled,
     };

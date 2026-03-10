@@ -29,6 +29,8 @@ class AppSettings with _$AppSettings {
   const factory AppSettings({
     @Default('') String storageFolderPath,
     @ThemeModeConverter() @Default(ThemeMode.system) ThemeMode themeMode,
+    @Default(true) bool soundEnabled,
+    @Default(false) bool ttsEnabled,
   }) = _AppSettings;
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>

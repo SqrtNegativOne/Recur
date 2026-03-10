@@ -5,6 +5,7 @@ import 'package:recur/features/checklist/presentation/screens/checklist_form_scr
 import 'package:recur/features/checklist/presentation/screens/task_form_screen.dart';
 import 'package:recur/features/runner/presentation/screens/run_screen.dart';
 import 'package:recur/features/runner/presentation/screens/run_complete_screen.dart';
+import 'package:recur/features/runner/presentation/screens/run_history_screen.dart';
 import 'package:recur/features/settings/presentation/screens/settings_screen.dart';
 
 final appRouter = GoRouter(
@@ -59,6 +60,19 @@ final appRouter = GoRouter(
       path: '/checklist/:id/run/complete',
       builder: (context, state) => RunCompleteScreen(
         checklistId: state.pathParameters['id']!,
+      ),
+    ),
+    // Run history — all checklists
+    GoRoute(
+      path: '/history',
+      builder: (context, state) => const RunHistoryScreen(),
+    ),
+    // Run history — filtered to a specific checklist
+    GoRoute(
+      path: '/checklist/:id/history',
+      builder: (context, state) => RunHistoryScreen(
+        checklistId: state.pathParameters['id']!,
+        checklistName: state.uri.queryParameters['name'],
       ),
     ),
     GoRoute(

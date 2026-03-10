@@ -30,4 +30,20 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
     await repo.save(updated);
     state = AsyncData(updated);
   }
+
+  Future<void> setSoundEnabled(bool enabled) async {
+    final repo = ref.read(settingsRepositoryProvider);
+    final current = state.valueOrNull ?? const AppSettings();
+    final updated = current.copyWith(soundEnabled: enabled);
+    await repo.save(updated);
+    state = AsyncData(updated);
+  }
+
+  Future<void> setTtsEnabled(bool enabled) async {
+    final repo = ref.read(settingsRepositoryProvider);
+    final current = state.valueOrNull ?? const AppSettings();
+    final updated = current.copyWith(ttsEnabled: enabled);
+    await repo.save(updated);
+    state = AsyncData(updated);
+  }
 }
