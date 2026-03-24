@@ -49,7 +49,7 @@ class SettingsScreen extends ConsumerWidget {
                   segments: const [
                     ButtonSegment(
                       value: ThemeMode.system,
-                      label: Text('System'),
+                      label: Text('Auto'),
                       icon: Icon(Icons.brightness_auto),
                     ),
                     ButtonSegment(
