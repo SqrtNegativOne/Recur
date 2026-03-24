@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:recur/core/providers/time_theme_provider.dart';
 import 'package:recur/features/checklist/presentation/widgets/checklist_card.dart';
 import 'package:recur/features/checklist/providers/checklist_list_provider.dart';
 
@@ -10,10 +11,23 @@ class ChecklistListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final checklistsAsync = ref.watch(checklistListProvider);
+    final greeting = greetingForHour(DateTime.now().hour);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Recur'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Recur'),
+            Text(
+              greeting,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.history),
