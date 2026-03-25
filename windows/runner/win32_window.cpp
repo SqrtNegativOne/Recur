@@ -18,6 +18,10 @@ namespace {
 
 constexpr const wchar_t kWindowClassName[] = L"FLUTTER_RUNNER_WIN32_WINDOW";
 
+// Timer ID and delay for background reopen behaviour.
+constexpr UINT kReopenTimerId = 1;
+constexpr UINT kReopenDelayMs = 10000;  // 10 seconds
+
 /// Registry key for app theme preference.
 ///
 /// A value of 0 indicates apps should use dark mode. A non-zero or missing
@@ -179,6 +183,20 @@ Win32Window::MessageHandler(HWND hwnd,
                             WPARAM const wparam,
                             LPARAM const lparam) noexcept {
   switch (message) {
+    case WM_CLOSE:
+      // Hide the window instead of destroying it, then reopen after a delay.
+      ShowWindow(hwnd, SW_HIDE);
+      SetTimer(hwnd, kReopenTimerId, kReopenDelayMs, nullptr);
+      return 0;
+
+    case WM_TIMER:
+      if (wparam == kReopenTimerId) {
+        KillTimer(hwnd, kReopenTimerId);
+        ShowWindow(hwnd, SW_SHOW);
+        SetForegroundWindow(hwnd);
+      }
+      return 0;
+
     case WM_DESTROY:
       window_handle_ = nullptr;
       Destroy();
