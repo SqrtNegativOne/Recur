@@ -71,6 +71,17 @@ class ChecklistRepository {
     }
   }
 
+  /// Imports a checklist from an external JSON file path into the storage directory.
+  /// Returns the imported checklist, or throws if the file is invalid.
+  Future<ChecklistModel> importFromFile(String filePath) async {
+    final file = File(filePath);
+    final content = await file.readAsString();
+    final json = jsonDecode(content) as Map<String, dynamic>;
+    final checklist = ChecklistModel.fromJson(json);
+    await save(checklist);
+    return checklist;
+  }
+
   /// Watches the storage folder for file changes (new, modified, deleted).
   /// Useful for detecting Syncthing-synced files.
   Stream<FileSystemEvent> watchFolder() {

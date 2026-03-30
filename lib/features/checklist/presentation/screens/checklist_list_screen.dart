@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,51 @@ import 'package:recur/features/checklist/providers/checklist_list_provider.dart'
 
 class ChecklistListScreen extends ConsumerWidget {
   const ChecklistListScreen({super.key});
+
+  Future<void> _importJson(BuildContext context, WidgetRef ref) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+      allowMultiple: true,
+    );
+    if (result == null || result.files.isEmpty) return;
+
+    int imported = 0;
+    final errors = <String>[];
+
+    for (final file in result.files) {
+      final path = file.path;
+      if (path == null) continue;
+      try {
+        await ref.read(checklistListProvider.notifier).importChecklist(path);
+        imported++;
+      } catch (_) {
+        errors.add(file.name);
+      }
+    }
+
+    if (!context.mounted) return;
+
+    if (errors.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            imported > 0
+                ? 'Imported $imported checklist${imported == 1 ? '' : 's'}. Failed: ${errors.join(', ')}'
+                : 'Failed to import: ${errors.join(', ')}',
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'Imported $imported checklist${imported == 1 ? '' : 's'} successfully'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,6 +75,11 @@ class ChecklistListScreen extends ConsumerWidget {
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.upload_file),
+            onPressed: () => _importJson(context, ref),
+            tooltip: 'Import JSON',
+          ),
           IconButton(
             icon: const Icon(Icons.history),
             onPressed: () => context.push('/history'),
