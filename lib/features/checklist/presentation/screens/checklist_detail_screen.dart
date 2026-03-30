@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,6 +65,11 @@ class _DetailContent extends ConsumerWidget {
             tooltip: 'Run History',
             onPressed: () => context.push(
                 '/checklist/${checklist.id}/history?name=${Uri.encodeComponent(checklist.name)}'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.download),
+            tooltip: 'Export as JSON',
+            onPressed: () => _exportJson(context),
           ),
           IconButton(
             icon: const Icon(Icons.link),
@@ -157,6 +166,35 @@ class _DetailContent extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _exportJson(BuildContext context) async {
+    final savePath = await FilePicker.platform.saveFile(
+      dialogTitle: 'Export checklist',
+      fileName: checklist.fileName,
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+    );
+    if (savePath == null) return;
+
+    try {
+      final json = const JsonEncoder.withIndent('  ').convert(checklist.toJson());
+      await File(savePath).writeAsString(json);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Exported successfully')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Export failed: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
   }
 
   void _copyTaskerUrl(BuildContext context) {
