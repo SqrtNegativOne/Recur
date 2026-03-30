@@ -56,4 +56,13 @@ class ChecklistListNotifier extends AsyncNotifier<List<ChecklistModel>> {
     await repo.delete(id);
     await _reload();
   }
+
+  /// Imports a checklist from an external JSON file path.
+  /// Returns the imported checklist name on success, throws on failure.
+  Future<String> importChecklist(String filePath) async {
+    final repo = await ref.read(checklistRepositoryProvider.future);
+    final checklist = await repo.importFromFile(filePath);
+    await _reload();
+    return checklist.name;
+  }
 }
