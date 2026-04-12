@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:recur/core/services/overlay_service.dart';
 import 'package:recur/features/checklist/providers/checklist_detail_provider.dart';
 import 'package:recur/features/runner/data/models/run_state.dart';
 import 'package:recur/features/runner/providers/run_session_provider.dart';
@@ -18,19 +19,44 @@ class RunScreen extends ConsumerStatefulWidget {
   ConsumerState<RunScreen> createState() => _RunScreenState();
 }
 
-class _RunScreenState extends ConsumerState<RunScreen> {
+class _RunScreenState extends ConsumerState<RunScreen>
+    with WidgetsBindingObserver {
   bool _started = false;
 
   @override
   void initState() {
     super.initState();
     WakelockPlus.enable();
+    WidgetsBinding.instance.addObserver(this);
+    // Request the SYSTEM_ALERT_WINDOW permission early so the user grants it
+    // before they background the app mid-run.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(overlayServiceProvider).requestPermissionIfNeeded();
+    });
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    // Ensure the overlay is gone when the run screen is torn down.
+    ref.read(overlayServiceProvider).hideOverlay();
     WakelockPlus.disable();
     super.dispose();
+  }
+
+  /// Show the overlay when the app moves to background; hide it on resume.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final overlay = ref.read(overlayServiceProvider);
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+        overlay.showOverlay();
+      case AppLifecycleState.resumed:
+        overlay.hideOverlay();
+      default:
+        break;
+    }
   }
 
   @override

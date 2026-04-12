@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recur/core/services/audio_service.dart';
+import 'package:recur/core/services/overlay_service.dart';
 import 'package:recur/features/checklist/data/models/checklist_model.dart';
 import 'package:recur/features/checklist/data/models/task_model.dart';
 import 'package:recur/features/runner/data/models/run_record.dart';
@@ -132,6 +133,7 @@ class RunSessionNotifier extends Notifier<RunState?> {
     } else {
       state = current.copyWith(elapsedSeconds: newElapsed);
     }
+    _relayToOverlay();
   }
 
   void _advanceToNextTask() {
@@ -152,6 +154,8 @@ class RunSessionNotifier extends Notifier<RunState?> {
         phase: RunPhase.allComplete,
         taskElapsedTimes: updatedTimes,
       );
+      // Close the overlay — the run is done
+      ref.read(overlayServiceProvider).hideOverlay();
       // Save run record to history
       _saveRunRecord(current, updatedTimes);
       // Announce completion via TTS
@@ -198,6 +202,21 @@ class RunSessionNotifier extends Notifier<RunState?> {
   }
 
   // --- History integration ---
+
+  /// Pushes the latest timer state to the floating overlay widget (Android only).
+  void _relayToOverlay() {
+    final s = state;
+    if (s == null) return;
+    final task = s.currentTask;
+    if (task == null) return;
+    ref.read(overlayServiceProvider).sendTimerData(
+      taskName: task.name,
+      remainingSeconds: s.remainingSeconds,
+      isOvertime: s.isOvertime,
+      taskIndex: s.currentTaskIndex + 1,
+      totalTasks: s.totalTaskCount,
+    );
+  }
 
   /// Creates and saves a RunRecord when all tasks complete.
   void _saveRunRecord(RunState finalState, List<int> taskTimes) {
