@@ -121,14 +121,6 @@ class _RunScreenState extends ConsumerState<RunScreen> {
                     totalTasks: runState.totalTaskCount,
                     currentTaskIndex: runState.currentTaskIndex,
                   ),
-                  const SizedBox(height: 16),
-                  // Task index label
-                  Text(
-                    'Task ${runState.currentTaskIndex + 1} of ${runState.totalTaskCount}',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: theme.colorScheme.outline,
-                    ),
-                  ),
                   const SizedBox(height: 32),
                   // Task name
                   Text(
@@ -181,7 +173,6 @@ class _RunScreenState extends ConsumerState<RunScreen> {
                       },
                       onSkip: () =>
                           ref.read(runSessionProvider.notifier).skip(),
-                      onStop: () => _confirmStop(context),
                     ),
                 ],
               ),
