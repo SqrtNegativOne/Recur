@@ -44,14 +44,15 @@ class CountdownRing extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                isOvertime ? '+' : '',
-                style: TextStyle(
-                  color: theme.colorScheme.error,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              if (isOvertime)
+                Text(
+                  '+',
+                  style: TextStyle(
+                    color: theme.colorScheme.error,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
               Text(
                 formatDuration(remainingSeconds.abs()),
                 style: theme.textTheme.displayMedium?.copyWith(
@@ -59,13 +60,6 @@ class CountdownRing extends StatelessWidget {
                   color: isOvertime ? theme.colorScheme.error : null,
                 ),
               ),
-              if (isPaused)
-                Text(
-                  'PAUSED',
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: theme.colorScheme.outline,
-                  ),
-                ),
             ],
           ),
         ],

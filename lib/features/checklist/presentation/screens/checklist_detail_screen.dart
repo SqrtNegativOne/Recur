@@ -51,8 +51,17 @@ class _DetailContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) context.go('/');
+      },
+      child: Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/'),
+        ),
         title: Text(checklist.name),
         actions: [
           IconButton(
@@ -164,6 +173,7 @@ class _DetailContent extends ConsumerWidget {
             child: const Icon(Icons.add),
           ),
         ],
+      ),
       ),
     );
   }
