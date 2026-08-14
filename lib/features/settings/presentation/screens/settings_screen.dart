@@ -1,9 +1,10 @@
+import 'dart:async';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:recur/features/checklist/providers/checklist_list_provider.dart';
 import 'package:recur/features/settings/providers/settings_provider.dart';
 import 'package:recur/features/settings/providers/storage_path_provider.dart';
-import 'package:recur/features/checklist/providers/checklist_list_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -65,9 +66,9 @@ class SettingsScreen extends ConsumerWidget {
                   ],
                   selected: {settings.themeMode},
                   onSelectionChanged: (modes) {
-                    ref
+                    unawaited(ref
                         .read(settingsProvider.notifier)
-                        .setThemeMode(modes.first);
+                        .setThemeMode(modes.first));
                   },
                 ),
               ),
@@ -80,7 +81,7 @@ class SettingsScreen extends ConsumerWidget {
                     const Text('Play a chime when a task timer expires'),
                 value: settings.soundEnabled,
                 onChanged: (value) {
-                  ref.read(settingsProvider.notifier).setSoundEnabled(value);
+                  unawaited(ref.read(settingsProvider.notifier).setSoundEnabled(enabled: value));
                 },
               ),
               const Divider(),
@@ -92,7 +93,7 @@ class SettingsScreen extends ConsumerWidget {
                     'Announce each task with "Get X done in Y"'),
                 value: settings.ttsEnabled,
                 onChanged: (value) {
-                  ref.read(settingsProvider.notifier).setTtsEnabled(value);
+                  unawaited(ref.read(settingsProvider.notifier).setTtsEnabled(enabled: value));
                 },
               ),
               const Divider(),

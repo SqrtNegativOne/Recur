@@ -3,18 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:recur/core/utils/duration_formatter.dart';
 
 class CountdownRing extends StatelessWidget {
+
+  const CountdownRing({
+    required this.remainingSeconds, required this.progress, super.key,
+    this.isOvertime = false,
+    this.isPaused = false,
+  });
   final int remainingSeconds;
   final double progress; // 0.0 to 1.0
   final bool isOvertime;
   final bool isPaused;
-
-  const CountdownRing({
-    super.key,
-    required this.remainingSeconds,
-    required this.progress,
-    this.isOvertime = false,
-    this.isPaused = false,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +67,6 @@ class CountdownRing extends StatelessWidget {
 }
 
 class _RingPainter extends CustomPainter {
-  final double progress;
-  final Color color;
-  final Color backgroundColor;
-  final double strokeWidth;
 
   _RingPainter({
     required this.progress,
@@ -80,6 +74,10 @@ class _RingPainter extends CustomPainter {
     required this.backgroundColor,
     required this.strokeWidth,
   });
+  final double progress;
+  final Color color;
+  final Color backgroundColor;
+  final double strokeWidth;
 
   @override
   void paint(Canvas canvas, Size size) {

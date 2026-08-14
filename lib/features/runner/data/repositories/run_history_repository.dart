@@ -20,7 +20,7 @@ class RunHistoryRepository {
   Future<List<RunRecord>> loadAll() async {
     try {
       final file = await _file;
-      if (!await file.exists()) return [];
+      if (!file.existsSync()) return [];
       final content = await file.readAsString();
       final list = jsonDecode(content) as List;
       final records = list
@@ -28,7 +28,7 @@ class RunHistoryRepository {
           .toList()
         ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
       return records;
-    } catch (_) {
+    } on Object {
       return [];
     }
   }

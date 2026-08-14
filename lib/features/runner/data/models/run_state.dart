@@ -8,7 +8,6 @@ enum RunPhase { idle, running, paused, transitioning, allComplete }
 
 @freezed
 class RunState with _$RunState {
-  const RunState._();
 
   const factory RunState({
     required ChecklistModel checklist,
@@ -18,6 +17,7 @@ class RunState with _$RunState {
     DateTime? startedAt,
     @Default([]) List<int> taskElapsedTimes,
   }) = _RunState;
+  const RunState._();
 
   /// The currently active task, or null if index is out of range.
   TaskModel? get currentTask {
@@ -37,7 +37,7 @@ class RunState with _$RunState {
   /// Progress fraction (0.0 to 1.0) for the current task's timer.
   double get progress {
     final task = currentTask;
-    if (task == null || task.durationSeconds == 0) return 1.0;
+    if (task == null || task.durationSeconds == 0) return 1;
     return (elapsedSeconds / task.durationSeconds).clamp(0.0, 1.0);
   }
 

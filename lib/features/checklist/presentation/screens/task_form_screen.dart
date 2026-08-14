@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:uuid/uuid.dart';
+import 'package:recur/features/checklist/data/models/checklist_model.dart';
 import 'package:recur/features/checklist/data/models/task_model.dart';
 import 'package:recur/features/checklist/presentation/widgets/duration_picker.dart';
 import 'package:recur/features/checklist/providers/checklist_detail_provider.dart';
 import 'package:recur/features/checklist/providers/checklist_list_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class TaskFormScreen extends ConsumerStatefulWidget {
-  final String checklistId;
-  final String? taskId;
 
   const TaskFormScreen({
-    super.key,
-    required this.checklistId,
+    required this.checklistId, super.key,
     this.taskId,
   });
+  final String checklistId;
+  final String? taskId;
 
   @override
   ConsumerState<TaskFormScreen> createState() => _TaskFormScreenState();
@@ -75,16 +75,15 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
 
         TaskModel? existingTask;
         if (_isEditing) {
-          try {
-            existingTask =
-                checklist.tasks.firstWhere((t) => t.id == widget.taskId);
-            _initFromTask(existingTask);
-          } catch (_) {
+          final matches = checklist.tasks.where((t) => t.id == widget.taskId);
+          if (matches.isEmpty) {
             return Scaffold(
               appBar: AppBar(),
               body: const Center(child: Text('Task not found')),
             );
           }
+          existingTask = matches.first;
+          _initFromTask(existingTask);
         }
 
         return Scaffold(
@@ -161,7 +160,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
     );
   }
 
-  Future<void> _save(dynamic checklist, TaskModel? existingTask) async {
+  Future<void> _save(ChecklistModel checklist, TaskModel? existingTask) async {
     if (!_formKey.currentState!.validate()) return;
     if (_durationSeconds <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -174,7 +173,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
 
     try {
       final repo = await ref.read(checklistRepositoryProvider.future);
-      final tasks = List.of(checklist.tasks as List<TaskModel>);
+      final tasks = List.of(checklist.tasks);
 
       final task = TaskModel(
         id: existingTask?.id ?? const Uuid().v4(),
@@ -192,8 +191,9 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
 
       final updated = checklist.copyWith(tasks: tasks);
       await repo.save(updated);
-      ref.invalidate(checklistListProvider);
-      ref.invalidate(checklistDetailProvider(widget.checklistId));
+      ref
+        ..invalidate(checklistListProvider)
+        ..invalidate(checklistDetailProvider(widget.checklistId));
 
       if (mounted) context.pop();
     } finally {

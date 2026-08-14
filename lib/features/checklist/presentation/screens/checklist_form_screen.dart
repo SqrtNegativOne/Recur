@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:uuid/uuid.dart';
 import 'package:recur/features/checklist/data/models/checklist_model.dart';
 import 'package:recur/features/checklist/data/models/checklist_settings.dart';
 import 'package:recur/features/checklist/providers/checklist_detail_provider.dart';
 import 'package:recur/features/checklist/providers/checklist_list_provider.dart';
+import 'package:uuid/uuid.dart';
 
 /// Available colors for checklist cards.
 const _colorOptions = [
@@ -20,9 +20,9 @@ const _colorOptions = [
 ];
 
 class ChecklistFormScreen extends ConsumerStatefulWidget {
-  final String? checklistId;
 
   const ChecklistFormScreen({super.key, this.checklistId});
+  final String? checklistId;
 
   @override
   ConsumerState<ChecklistFormScreen> createState() =>
@@ -225,8 +225,9 @@ class _ChecklistFormScreenState extends ConsumerState<ChecklistFormScreen> {
       );
 
       await repo.save(checklist);
-      ref.invalidate(checklistListProvider);
-      ref.invalidate(checklistDetailProvider(checklist.id));
+      ref
+        ..invalidate(checklistListProvider)
+        ..invalidate(checklistDetailProvider(checklist.id));
 
       if (mounted) {
         if (_isEditing) {
@@ -243,7 +244,7 @@ class _ChecklistFormScreenState extends ConsumerState<ChecklistFormScreen> {
   Color _parseColor(String hex) {
     try {
       return Color(int.parse(hex.replaceFirst('#', '0xFF')));
-    } catch (_) {
+    } on Object {
       return const Color(0xFF6750A4);
     }
   }

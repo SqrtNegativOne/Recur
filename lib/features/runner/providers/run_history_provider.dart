@@ -14,7 +14,7 @@ class RunHistoryNotifier extends AsyncNotifier<List<RunRecord>> {
   @override
   Future<List<RunRecord>> build() async {
     final repo = ref.read(runHistoryRepositoryProvider);
-    return await repo.loadAll();
+    return repo.loadAll();
   }
 
   /// Saves a new record and refreshes the list.
@@ -26,8 +26,8 @@ class RunHistoryNotifier extends AsyncNotifier<List<RunRecord>> {
 }
 
 /// Provides run records filtered by checklist ID.
-final checklistHistoryProvider =
+final FutureProviderFamily<List<RunRecord>, String> checklistHistoryProvider =
     FutureProvider.family<List<RunRecord>, String>((ref, checklistId) async {
   final repo = ref.read(runHistoryRepositoryProvider);
-  return await repo.loadForChecklist(checklistId);
+  return repo.loadForChecklist(checklistId);
 });

@@ -16,7 +16,7 @@ String greetingForHour(int hour) {
 /// Emits the time-based ThemeMode and updates every minute.
 final timeBasedThemeModeProvider = StreamProvider<ThemeMode>((ref) async* {
   yield themeForHour(DateTime.now().hour);
-  await for (final _ in Stream.periodic(const Duration(minutes: 1))) {
+  await for (final _ in Stream<void>.periodic(const Duration(minutes: 1))) {
     yield themeForHour(DateTime.now().hour);
   }
 });

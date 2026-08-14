@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recur/features/settings/data/models/app_settings.dart';
 import 'package:recur/features/settings/data/repositories/settings_repository.dart';
 
-final settingsRepositoryProvider = Provider((ref) => SettingsRepository());
+final Provider<SettingsRepository> settingsRepositoryProvider = Provider((ref) => SettingsRepository());
 
 final settingsProvider =
     AsyncNotifierProvider<SettingsNotifier, AppSettings>(SettingsNotifier.new);
@@ -12,7 +12,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
   @override
   Future<AppSettings> build() async {
     final repo = ref.read(settingsRepositoryProvider);
-    return await repo.load();
+    return repo.load();
   }
 
   Future<void> setStoragePath(String path) async {
@@ -31,7 +31,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
     state = AsyncData(updated);
   }
 
-  Future<void> setSoundEnabled(bool enabled) async {
+  Future<void> setSoundEnabled({required bool enabled}) async {
     final repo = ref.read(settingsRepositoryProvider);
     final current = state.valueOrNull ?? const AppSettings();
     final updated = current.copyWith(soundEnabled: enabled);
@@ -39,7 +39,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
     state = AsyncData(updated);
   }
 
-  Future<void> setTtsEnabled(bool enabled) async {
+  Future<void> setTtsEnabled({required bool enabled}) async {
     final repo = ref.read(settingsRepositoryProvider);
     final current = state.valueOrNull ?? const AppSettings();
     final updated = current.copyWith(ttsEnabled: enabled);

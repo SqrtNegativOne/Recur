@@ -6,8 +6,7 @@ import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final overlayServiceProvider = Provider<OverlayService>((ref) {
-  final service = OverlayService();
-  service._init();
+  final service = OverlayService().._init();
   ref.onDispose(service.dispose);
   return service;
 });
@@ -15,7 +14,7 @@ final overlayServiceProvider = Provider<OverlayService>((ref) {
 /// Manages the floating timer overlay on Android.
 ///
 /// On non-Android platforms all methods are no-ops.
-/// The overlay widget ([overlayMain]) runs in a separate Dart isolate;
+/// The overlay widget runs in a separate Dart isolate;
 /// this service is the main isolate's end of that bridge.
 class OverlayService {
   static const _channel = MethodChannel('com.recur.recur/main');
@@ -30,21 +29,21 @@ class OverlayService {
     // Listen for the 'open_app' tap from the overlay isolate.
     _subscription = FlutterOverlayWindow.overlayListener.listen((data) {
       if (data is Map && data['action'] == 'open_app') {
-        _bringToFront();
+        unawaited(_bringToFront());
       }
     });
   }
 
   void dispose() {
-    _subscription?.cancel();
+    unawaited(_subscription?.cancel());
   }
 
   Future<bool> requestPermissionIfNeeded() async {
     if (!Platform.isAndroid) return false;
     final granted = await FlutterOverlayWindow.isPermissionGranted();
-    if (granted != true) {
+    if (!granted) {
       await FlutterOverlayWindow.requestPermission();
-      return await FlutterOverlayWindow.isPermissionGranted() == true;
+      return FlutterOverlayWindow.isPermissionGranted();
     }
     return true;
   }
@@ -52,13 +51,12 @@ class OverlayService {
   Future<void> showOverlay() async {
     if (!Platform.isAndroid) return;
     final granted = await FlutterOverlayWindow.isPermissionGranted();
-    if (granted != true) return;
+    if (!granted) return;
     _isActive = true;
     await FlutterOverlayWindow.showOverlay(
       height: 130,
       width: 210,
       alignment: OverlayAlignment.centerRight,
-      flag: OverlayFlag.defaultFlag,
       enableDrag: true,
       positionGravity: PositionGravity.auto,
     );
@@ -81,13 +79,13 @@ class OverlayService {
     required int totalTasks,
   }) {
     if (!Platform.isAndroid || !_isActive) return;
-    FlutterOverlayWindow.shareData({
+    unawaited(FlutterOverlayWindow.shareData({
       'taskName': taskName,
       'remainingSeconds': remainingSeconds,
       'isOvertime': isOvertime,
       'taskIndex': taskIndex,
       'totalTasks': totalTasks,
-    });
+    }));
   }
 
   Future<void> _bringToFront() async {

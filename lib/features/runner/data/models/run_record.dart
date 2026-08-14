@@ -11,7 +11,6 @@ part 'run_record.g.dart';
 /// "you ran 20% faster than planned".
 @freezed
 class RunRecord with _$RunRecord {
-  const RunRecord._();
 
   const factory RunRecord({
     required String id,
@@ -24,6 +23,7 @@ class RunRecord with _$RunRecord {
     @Default([]) List<int> taskPlannedSeconds,
     @Default([]) List<String> taskNames,
   }) = _RunRecord;
+  const RunRecord._();
 
   factory RunRecord.fromJson(Map<String, dynamic> json) =>
       _$RunRecordFromJson(json);

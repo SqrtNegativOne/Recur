@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:recur/features/settings/data/models/app_settings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsRepository {
   static const _storagePathKey = 'storage_folder_path';

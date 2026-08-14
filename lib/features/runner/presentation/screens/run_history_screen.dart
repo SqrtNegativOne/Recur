@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recur/core/utils/duration_formatter.dart';
@@ -7,10 +8,10 @@ import 'package:recur/features/runner/providers/run_history_provider.dart';
 /// Shows run history and stats — either for all checklists or filtered
 /// to a single checklist (when checklistId is provided).
 class RunHistoryScreen extends ConsumerWidget {
-  final String? checklistId;
-  final String? checklistName;
 
   const RunHistoryScreen({super.key, this.checklistId, this.checklistName});
+  final String? checklistId;
+  final String? checklistName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -64,9 +65,9 @@ class RunHistoryScreen extends ConsumerWidget {
 
 /// Displays aggregate stats: total runs, total time, avg time, streak.
 class _StatsCard extends StatelessWidget {
-  final List<RunRecord> records;
 
   const _StatsCard({required this.records});
+  final List<RunRecord> records;
 
   @override
   Widget build(BuildContext context) {
@@ -148,8 +149,8 @@ class _StatsCard extends StatelessWidget {
     // Streak must include today or yesterday
     if (dates.first != today && dates.first != yesterday) return 0;
 
-    int streak = 1;
-    for (int i = 1; i < dates.length; i++) {
+    var streak = 1;
+    for (var i = 1; i < dates.length; i++) {
       if (dates[i - 1].difference(dates[i]).inDays == 1) {
         streak++;
       } else {
@@ -161,15 +162,15 @@ class _StatsCard extends StatelessWidget {
 }
 
 class _StatItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
 
   const _StatItem({
     required this.icon,
     required this.label,
     required this.value,
   });
+  final IconData icon;
+  final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {
@@ -194,9 +195,9 @@ class _StatItem extends StatelessWidget {
 
 /// Shows a single run record with date, time, and task count.
 class _RunRecordTile extends StatelessWidget {
-  final RunRecord record;
 
   const _RunRecordTile({required this.record});
+  final RunRecord record;
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +250,7 @@ class _RunRecordTile extends StatelessWidget {
   }
 
   void _showDetails(BuildContext context) {
-    showModalBottomSheet(
+    unawaited(showModalBottomSheet<void>(
       context: context,
       builder: (ctx) => Padding(
         padding: const EdgeInsets.all(24),
@@ -284,6 +285,6 @@ class _RunRecordTile extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }

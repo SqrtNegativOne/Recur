@@ -8,14 +8,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:recur/core/utils/duration_formatter.dart';
 import 'package:recur/features/checklist/data/models/checklist_model.dart';
+import 'package:recur/features/checklist/presentation/widgets/task_tile.dart';
 import 'package:recur/features/checklist/providers/checklist_detail_provider.dart';
 import 'package:recur/features/checklist/providers/checklist_list_provider.dart';
-import 'package:recur/features/checklist/presentation/widgets/task_tile.dart';
 
 class ChecklistDetailScreen extends ConsumerWidget {
-  final String checklistId;
 
-  const ChecklistDetailScreen({super.key, required this.checklistId});
+  const ChecklistDetailScreen({required this.checklistId, super.key});
+  final String checklistId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,9 +43,9 @@ class ChecklistDetailScreen extends ConsumerWidget {
 }
 
 class _DetailContent extends ConsumerWidget {
-  final ChecklistModel checklist;
 
   const _DetailContent({required this.checklist});
+  final ChecklistModel checklist;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -195,7 +195,7 @@ class _DetailContent extends ConsumerWidget {
           const SnackBar(content: Text('Exported successfully')),
         );
       }
-    } catch (e) {
+    } on Object catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -207,37 +207,41 @@ class _DetailContent extends ConsumerWidget {
     }
   }
 
-  void _copyTaskerUrl(BuildContext context) {
+  Future<void> _copyTaskerUrl(BuildContext context) async {
     final url = 'recur:///run/${checklist.id}';
-    Clipboard.setData(ClipboardData(text: url));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Copied: $url'),
-        duration: const Duration(seconds: 3),
-      ),
-    );
+    await Clipboard.setData(ClipboardData(text: url));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Copied: $url'),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   Future<void> _reorderTasks(WidgetRef ref, int oldIndex, int newIndex) async {
-    if (newIndex > oldIndex) newIndex--;
+    var insertIndex = newIndex;
+    if (insertIndex > oldIndex) insertIndex--;
     final tasks = List.of(checklist.tasks);
     final item = tasks.removeAt(oldIndex);
-    tasks.insert(newIndex, item);
+    tasks.insert(insertIndex, item);
     final updated = checklist.copyWith(tasks: tasks);
     final repo = await ref.read(checklistRepositoryProvider.future);
     await repo.save(updated);
-    ref.invalidate(checklistListProvider);
-    ref.invalidate(checklistDetailProvider(checklist.id));
+    ref
+      ..invalidate(checklistListProvider)
+      ..invalidate(checklistDetailProvider(checklist.id));
   }
 
   Future<void> _deleteTask(WidgetRef ref, int index) async {
-    final tasks = List.of(checklist.tasks);
-    tasks.removeAt(index);
+    final tasks = List.of(checklist.tasks)..removeAt(index);
     final updated = checklist.copyWith(tasks: tasks);
     final repo = await ref.read(checklistRepositoryProvider.future);
     await repo.save(updated);
-    ref.invalidate(checklistListProvider);
-    ref.invalidate(checklistDetailProvider(checklist.id));
+    ref
+      ..invalidate(checklistListProvider)
+      ..invalidate(checklistDetailProvider(checklist.id));
   }
 
   Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {

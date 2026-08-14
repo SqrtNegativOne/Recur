@@ -1,19 +1,20 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:recur/core/services/overlay_service.dart';
 import 'package:recur/features/checklist/providers/checklist_detail_provider.dart';
 import 'package:recur/features/runner/data/models/run_state.dart';
-import 'package:recur/features/runner/providers/run_session_provider.dart';
 import 'package:recur/features/runner/presentation/widgets/countdown_ring.dart';
-import 'package:recur/features/runner/presentation/widgets/task_progress_bar.dart';
 import 'package:recur/features/runner/presentation/widgets/run_controls.dart';
+import 'package:recur/features/runner/presentation/widgets/task_progress_bar.dart';
+import 'package:recur/features/runner/providers/run_session_provider.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class RunScreen extends ConsumerStatefulWidget {
-  final String checklistId;
 
-  const RunScreen({super.key, required this.checklistId});
+  const RunScreen({required this.checklistId, super.key});
+  final String checklistId;
 
   @override
   ConsumerState<RunScreen> createState() => _RunScreenState();
@@ -26,12 +27,12 @@ class _RunScreenState extends ConsumerState<RunScreen>
   @override
   void initState() {
     super.initState();
-    WakelockPlus.enable();
+    unawaited(WakelockPlus.enable());
     WidgetsBinding.instance.addObserver(this);
     // Request the SYSTEM_ALERT_WINDOW permission early so the user grants it
     // before they background the app mid-run.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(overlayServiceProvider).requestPermissionIfNeeded();
+      unawaited(ref.read(overlayServiceProvider).requestPermissionIfNeeded());
     });
   }
 
@@ -39,8 +40,8 @@ class _RunScreenState extends ConsumerState<RunScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     // Ensure the overlay is gone when the run screen is torn down.
-    ref.read(overlayServiceProvider).hideOverlay();
-    WakelockPlus.disable();
+    unawaited(ref.read(overlayServiceProvider).hideOverlay());
+    unawaited(WakelockPlus.disable());
     super.dispose();
   }
 
@@ -51,10 +52,11 @@ class _RunScreenState extends ConsumerState<RunScreen>
     switch (state) {
       case AppLifecycleState.paused:
       case AppLifecycleState.hidden:
-        overlay.showOverlay();
+        unawaited(overlay.showOverlay());
       case AppLifecycleState.resumed:
-        overlay.hideOverlay();
-      default:
+        unawaited(overlay.hideOverlay());
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
         break;
     }
   }
@@ -210,7 +212,7 @@ class _RunScreenState extends ConsumerState<RunScreen>
   }
 
   void _confirmStop(BuildContext context) {
-    showDialog(
+    unawaited(showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Stop routine?'),
@@ -229,6 +231,6 @@ class _RunScreenState extends ConsumerState<RunScreen>
           ),
         ],
       ),
-    );
+    ));
   }
 }

@@ -1,18 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:recur/core/utils/logger.dart';
 import 'package:recur/features/checklist/data/models/checklist_model.dart';
 
 class ChecklistRepository {
-  final Directory storageDir;
 
   ChecklistRepository(this.storageDir);
+  final Directory storageDir;
 
   /// Loads all checklists from JSON files in the storage directory.
   /// Skips Syncthing conflict files (.sync-conflict-*).
   Future<List<ChecklistModel>> loadAll() async {
     final checklists = <ChecklistModel>[];
-    if (!await storageDir.exists()) return checklists;
+    if (!storageDir.existsSync()) return checklists;
 
     await for (final entity in storageDir.list()) {
       if (entity is File && _isValidChecklistFile(entity.path)) {
@@ -20,8 +22,8 @@ class ChecklistRepository {
           final content = await entity.readAsString();
           final json = jsonDecode(content) as Map<String, dynamic>;
           checklists.add(ChecklistModel.fromJson(json));
-        } catch (_) {
-          // Skip malformed files silently
+        } on Object catch (e, stack) {
+          logger.e('Failed to parse checklist file: ${entity.path}', error: e, stackTrace: stack);
         }
       }
     }
@@ -34,11 +36,8 @@ class ChecklistRepository {
   /// Loads a single checklist by its ID.
   Future<ChecklistModel?> loadById(String id) async {
     final all = await loadAll();
-    try {
-      return all.firstWhere((c) => c.id == id);
-    } catch (_) {
-      return null;
-    }
+    final matches = all.where((c) => c.id == id);
+    return matches.isEmpty ? null : matches.first;
   }
 
   /// Saves a checklist to its JSON file, updating the updatedAt timestamp.
@@ -64,7 +63,7 @@ class ChecklistRepository {
             await entity.delete();
             return;
           }
-        } catch (_) {
+        } on Object {
           // Skip
         }
       }
@@ -105,7 +104,7 @@ class ChecklistRepository {
           if (json['id'] == id) {
             await entity.delete();
           }
-        } catch (_) {
+        } on Object {
           // Skip
         }
       }

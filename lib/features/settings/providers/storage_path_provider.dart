@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 Future<Directory> resolveStorageDirectory(String customPath) async {
   if (customPath.isNotEmpty) {
     final dir = Directory(customPath);
-    if (!await dir.exists()) {
+    if (!dir.existsSync()) {
       await dir.create(recursive: true);
     }
     return dir;
@@ -16,7 +16,7 @@ Future<Directory> resolveStorageDirectory(String customPath) async {
   // Default: platform documents directory / Recur / checklists
   final docsDir = await _getDocumentsDirectory();
   final defaultDir = Directory('${docsDir.path}/Recur/checklists');
-  if (!await defaultDir.exists()) {
+  if (!defaultDir.existsSync()) {
     await defaultDir.create(recursive: true);
   }
   return defaultDir;
@@ -25,5 +25,5 @@ Future<Directory> resolveStorageDirectory(String customPath) async {
 Future<Directory> _getDocumentsDirectory() async {
   // On Windows, getApplicationDocumentsDirectory() returns the user's
   // Documents folder, which is the right place for user-visible files.
-  return await getApplicationDocumentsDirectory();
+  return getApplicationDocumentsDirectory();
 }

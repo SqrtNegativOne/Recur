@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
@@ -8,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 
 final audioServiceProvider = Provider<AudioService>((ref) {
   final service = AudioService();
-  ref.onDispose(() => service.dispose());
+  ref.onDispose(service.dispose);
   return service;
 });
 
@@ -32,20 +33,20 @@ class AudioService {
       // Generate and cache the notification sound as a temp file
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/recur_chime.wav');
-      if (!await file.exists()) {
+      if (!file.existsSync()) {
         final wavData = _generateChimeWav();
         await file.writeAsBytes(wavData);
       }
       _soundFilePath = file.path;
-    } catch (_) {
+    } on Object {
       // Sound generation failed — we'll just skip playing sounds
     }
 
     try {
       await _tts.setLanguage('en-US');
       await _tts.setSpeechRate(0.45);
-      await _tts.setVolume(1.0);
-    } catch (_) {
+      await _tts.setVolume(1);
+    } on Object {
       // TTS init failed — we'll skip speaking
     }
   }
@@ -58,7 +59,7 @@ class AudioService {
 
     try {
       await _player.play(DeviceFileSource(path));
-    } catch (_) {
+    } on Object {
       // Playback failed — not critical
     }
   }
@@ -69,7 +70,7 @@ class AudioService {
     final duration = _formatDurationForSpeech(durationSeconds);
     try {
       await _tts.speak('Get $taskName done in $duration');
-    } catch (_) {
+    } on Object {
       // TTS failed — not critical
     }
   }
@@ -79,7 +80,7 @@ class AudioService {
     await _ensureInitialized();
     try {
       await _tts.speak('All tasks complete. Well done!');
-    } catch (_) {
+    } on Object {
       // TTS failed — not critical
     }
   }
@@ -121,7 +122,7 @@ class AudioService {
 
     // WAV header
     void writeString(int offset, String s) {
-      for (int i = 0; i < s.length; i++) {
+      for (var i = 0; i < s.length; i++) {
         buffer.setUint8(offset + i, s.codeUnitAt(i));
       }
     }
@@ -129,34 +130,32 @@ class AudioService {
     writeString(0, 'RIFF');
     buffer.setUint32(4, fileSize - 8, Endian.little);
     writeString(8, 'WAVE');
-    writeString(12, 'fmt ');
-    buffer.setUint32(16, 16, Endian.little); // sub-chunk size
-    buffer.setUint16(20, 1, Endian.little); // PCM
-    buffer.setUint16(22, 1, Endian.little); // mono
-    buffer.setUint32(24, sampleRate, Endian.little);
-    buffer.setUint32(28, sampleRate * 2, Endian.little); // byte rate
-    buffer.setUint16(32, 2, Endian.little); // block align
-    buffer.setUint16(34, 16, Endian.little); // bits per sample
+    buffer
+      ..setUint32(16, 16, Endian.little) // sub-chunk size
+      ..setUint16(20, 1, Endian.little) // PCM
+      ..setUint16(22, 1, Endian.little) // mono
+      ..setUint32(24, sampleRate, Endian.little)
+      ..setUint32(28, sampleRate * 2, Endian.little) // byte rate
+      ..setUint16(32, 2, Endian.little) // block align
+      ..setUint16(34, 16, Endian.little); // bits per sample
     writeString(36, 'data');
     buffer.setUint32(40, dataSize, Endian.little);
 
-    int sampleIndex = 0;
+    var sampleIndex = 0;
 
     // Helper: write a tone with fade envelope
     void writeTone(int frequency, int numSamples) {
-      for (int i = 0; i < numSamples; i++) {
-        final t = i / sampleRate;
-        // Smooth fade-in (first 10%) and fade-out (last 30%)
-        double envelope = 1.0;
-        final fadeIn = numSamples * 0.1;
-        final fadeOut = numSamples * 0.3;
+      final fadeIn = numSamples * 0.1;
+      final fadeOut = numSamples * 0.3;
+      for (var i = 0; i < numSamples; i++) {
+        double envelope = 1;
         if (i < fadeIn) {
           envelope = i / fadeIn;
         } else if (i > numSamples - fadeOut) {
           envelope = (numSamples - i) / fadeOut;
         }
         final sample =
-            (sin(2 * pi * frequency * t) * 32767 * envelope * 0.4).toInt();
+            (sin(2 * pi * frequency * i / sampleRate) * 32767 * 0.4 * envelope).toInt();
         buffer.setInt16(
             44 + sampleIndex * 2, sample.clamp(-32768, 32767), Endian.little);
         sampleIndex++;
@@ -167,7 +166,7 @@ class AudioService {
     writeTone(tone1Freq, tone1Samples);
 
     // Gap (silence)
-    for (int i = 0; i < gapSamples; i++) {
+    for (var i = 0; i < gapSamples; i++) {
       buffer.setInt16(44 + sampleIndex * 2, 0, Endian.little);
       sampleIndex++;
     }
@@ -179,7 +178,7 @@ class AudioService {
   }
 
   void dispose() {
-    _player.dispose();
-    _tts.stop();
+    unawaited(_player.dispose());
+    unawaited(_tts.stop());
   }
 }

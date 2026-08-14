@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recur/features/checklist/data/models/checklist_model.dart';
 import 'package:recur/features/checklist/data/repositories/checklist_repository.dart';
@@ -16,32 +17,32 @@ final checklistListProvider =
         ChecklistListNotifier.new);
 
 class ChecklistListNotifier extends AsyncNotifier<List<ChecklistModel>> {
-  StreamSubscription? _watchSub;
+  StreamSubscription<FileSystemEvent>? _watchSub;
 
   @override
   Future<List<ChecklistModel>> build() async {
     final repo = await ref.watch(checklistRepositoryProvider.future);
 
     // Cancel any previous watcher
-    _watchSub?.cancel();
+    await _watchSub?.cancel();
 
     // Watch for filesystem changes (Syncthing, etc.)
     _watchSub = repo.watchFolder().listen((_) {
       // Debounce: just reload when anything changes
-      _reload();
+      unawaited(_reload());
     });
 
     // Clean up watcher when provider is disposed
     ref.onDispose(() => _watchSub?.cancel());
 
-    return await repo.loadAll();
+    return repo.loadAll();
   }
 
   Future<void> _reload() async {
     try {
       final repo = await ref.read(checklistRepositoryProvider.future);
       state = AsyncData(await repo.loadAll());
-    } catch (e, st) {
+    } on Object catch (e, st) {
       state = AsyncError(e, st);
     }
   }

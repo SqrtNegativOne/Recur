@@ -19,8 +19,9 @@ import 'package:uuid/uuid.dart';
 /// - Speaking a TTS prompt ("Get X done in Y") when each task starts
 ///
 /// When a run completes, it saves a RunRecord to the history provider.
-final runSessionProvider =
-    NotifierProvider<RunSessionNotifier, RunState?>(RunSessionNotifier.new);
+final runSessionProvider = NotifierProvider<RunSessionNotifier, RunState?>(
+  RunSessionNotifier.new,
+);
 
 class RunSessionNotifier extends Notifier<RunState?> {
   Timer? _timer;
@@ -43,8 +44,6 @@ class RunSessionNotifier extends Notifier<RunState?> {
 
     state = RunState(
       checklist: checklist,
-      currentTaskIndex: 0,
-      elapsedSeconds: 0,
       phase: RunPhase.running,
       startedAt: DateTime.now(),
     );
@@ -74,8 +73,7 @@ class RunSessionNotifier extends Notifier<RunState?> {
   void skip() {
     final current = state;
     if (current == null) return;
-    if (current.phase != RunPhase.running &&
-        current.phase != RunPhase.paused) {
+    if (current.phase != RunPhase.running && current.phase != RunPhase.paused) {
       return;
     }
     _timer?.cancel();
@@ -122,9 +120,8 @@ class RunSessionNotifier extends Notifier<RunState?> {
         );
         // Auto-advance after delay
         _transitionTimer = Timer(
-          Duration(
-              seconds: current.checklist.settings.autoAdvanceDelaySeconds),
-          () => _advanceToNextTask(),
+          Duration(seconds: current.checklist.settings.autoAdvanceDelaySeconds),
+          _advanceToNextTask,
         );
       } else {
         // No auto-advance: keep counting (overtime)
@@ -155,7 +152,7 @@ class RunSessionNotifier extends Notifier<RunState?> {
         taskElapsedTimes: updatedTimes,
       );
       // Close the overlay — the run is done
-      ref.read(overlayServiceProvider).hideOverlay();
+      unawaited(ref.read(overlayServiceProvider).hideOverlay());
       // Save run record to history
       _saveRunRecord(current, updatedTimes);
       // Announce completion via TTS
@@ -179,7 +176,7 @@ class RunSessionNotifier extends Notifier<RunState?> {
   void _playSound() {
     final settings = ref.read(settingsProvider).valueOrNull;
     if (settings?.soundEnabled ?? true) {
-      ref.read(audioServiceProvider).playTimerExpiredSound();
+      unawaited(ref.read(audioServiceProvider).playTimerExpiredSound());
     }
   }
 
@@ -187,9 +184,11 @@ class RunSessionNotifier extends Notifier<RunState?> {
   void _speakTask(TaskModel task) {
     final settings = ref.read(settingsProvider).valueOrNull;
     if (settings?.ttsEnabled ?? false) {
-      ref
-          .read(audioServiceProvider)
-          .speakTaskPrompt(task.name, task.durationSeconds);
+      unawaited(
+        ref
+            .read(audioServiceProvider)
+            .speakTaskPrompt(task.name, task.durationSeconds),
+      );
     }
   }
 
@@ -197,7 +196,7 @@ class RunSessionNotifier extends Notifier<RunState?> {
   void _speakComplete() {
     final settings = ref.read(settingsProvider).valueOrNull;
     if (settings?.ttsEnabled ?? false) {
-      ref.read(audioServiceProvider).speakComplete();
+      unawaited(ref.read(audioServiceProvider).speakComplete());
     }
   }
 
@@ -209,13 +208,15 @@ class RunSessionNotifier extends Notifier<RunState?> {
     if (s == null) return;
     final task = s.currentTask;
     if (task == null) return;
-    ref.read(overlayServiceProvider).sendTimerData(
-      taskName: task.name,
-      remainingSeconds: s.remainingSeconds,
-      isOvertime: s.isOvertime,
-      taskIndex: s.currentTaskIndex + 1,
-      totalTasks: s.totalTaskCount,
-    );
+    ref
+        .read(overlayServiceProvider)
+        .sendTimerData(
+          taskName: task.name,
+          remainingSeconds: s.remainingSeconds,
+          isOvertime: s.isOvertime,
+          taskIndex: s.currentTaskIndex + 1,
+          totalTasks: s.totalTaskCount,
+        );
   }
 
   /// Creates and saves a RunRecord when all tasks complete.
@@ -232,6 +233,6 @@ class RunSessionNotifier extends Notifier<RunState?> {
           finalState.checklist.tasks.map((t) => t.durationSeconds).toList(),
       taskNames: finalState.checklist.tasks.map((t) => t.name).toList(),
     );
-    ref.read(runHistoryProvider.notifier).addRecord(record);
+    unawaited(ref.read(runHistoryProvider.notifier).addRecord(record));
   }
 }

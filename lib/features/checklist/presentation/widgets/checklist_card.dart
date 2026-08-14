@@ -3,14 +3,12 @@ import 'package:recur/core/utils/duration_formatter.dart';
 import 'package:recur/features/checklist/data/models/checklist_model.dart';
 
 class ChecklistCard extends StatelessWidget {
-  final ChecklistModel checklist;
-  final VoidCallback onTap;
 
   const ChecklistCard({
-    super.key,
-    required this.checklist,
-    required this.onTap,
+    required this.checklist, required this.onTap, super.key,
   });
+  final ChecklistModel checklist;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +80,7 @@ class ChecklistCard extends StatelessWidget {
   Color _parseColor(String hex) {
     try {
       return Color(int.parse(hex.replaceFirst('#', '0xFF')));
-    } catch (_) {
+    } on Object {
       return const Color(0xFF6750A4);
     }
   }

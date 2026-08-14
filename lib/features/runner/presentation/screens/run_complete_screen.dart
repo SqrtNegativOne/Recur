@@ -5,9 +5,9 @@ import 'package:recur/core/utils/duration_formatter.dart';
 import 'package:recur/features/runner/providers/run_session_provider.dart';
 
 class RunCompleteScreen extends ConsumerWidget {
-  final String checklistId;
 
-  const RunCompleteScreen({super.key, required this.checklistId});
+  const RunCompleteScreen({required this.checklistId, super.key});
+  final String checklistId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -161,15 +161,15 @@ class RunCompleteScreen extends ConsumerWidget {
 }
 
 class _StatColumn extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
 
   const _StatColumn({
     required this.label,
     required this.value,
     required this.icon,
   });
+  final String label;
+  final String value;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -189,13 +189,13 @@ class _StatColumn extends StatelessWidget {
 
 /// Shows whether the user finished faster or slower than planned.
 class _PaceIndicator extends StatelessWidget {
-  final int actualSeconds;
-  final int plannedSeconds;
 
   const _PaceIndicator({
     required this.actualSeconds,
     required this.plannedSeconds,
   });
+  final int actualSeconds;
+  final int plannedSeconds;
 
   @override
   Widget build(BuildContext context) {

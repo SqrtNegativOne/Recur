@@ -1,11 +1,11 @@
 import 'package:go_router/go_router.dart';
-import 'package:recur/features/checklist/presentation/screens/checklist_list_screen.dart';
 import 'package:recur/features/checklist/presentation/screens/checklist_detail_screen.dart';
 import 'package:recur/features/checklist/presentation/screens/checklist_form_screen.dart';
+import 'package:recur/features/checklist/presentation/screens/checklist_list_screen.dart';
 import 'package:recur/features/checklist/presentation/screens/task_form_screen.dart';
-import 'package:recur/features/runner/presentation/screens/run_screen.dart';
 import 'package:recur/features/runner/presentation/screens/run_complete_screen.dart';
 import 'package:recur/features/runner/presentation/screens/run_history_screen.dart';
+import 'package:recur/features/runner/presentation/screens/run_screen.dart';
 import 'package:recur/features/settings/presentation/screens/settings_screen.dart';
 
 final appRouter = GoRouter(
@@ -71,7 +71,7 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/checklist/:id/history',
       builder: (context, state) => RunHistoryScreen(
-        checklistId: state.pathParameters['id']!,
+        checklistId: state.pathParameters['id'],
         checklistName: state.uri.queryParameters['name'],
       ),
     ),

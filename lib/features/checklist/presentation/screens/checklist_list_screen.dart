@@ -17,7 +17,7 @@ class ChecklistListScreen extends ConsumerWidget {
     );
     if (result == null || result.files.isEmpty) return;
 
-    int imported = 0;
+    var imported = 0;
     final errors = <String>[];
 
     for (final file in result.files) {
@@ -26,7 +26,7 @@ class ChecklistListScreen extends ConsumerWidget {
       try {
         await ref.read(checklistListProvider.notifier).importChecklist(path);
         imported++;
-      } catch (_) {
+      } on Object {
         errors.add(file.name);
       }
     }
@@ -150,7 +150,7 @@ class ChecklistListScreen extends ConsumerWidget {
                   crossAxisCount: crossAxisCount,
                   mainAxisSpacing: 8,
                   crossAxisSpacing: 8,
-                  childAspectRatio: 2.0,
+                  childAspectRatio: 2,
                 ),
                 itemCount: checklists.length,
                 itemBuilder: (context, index) {

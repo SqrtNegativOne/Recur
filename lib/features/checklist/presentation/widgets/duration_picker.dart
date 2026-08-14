@@ -3,14 +3,12 @@ import 'package:flutter/services.dart';
 
 /// A custom widget for picking a duration in minutes and seconds.
 class DurationPicker extends StatefulWidget {
-  final int initialSeconds;
-  final ValueChanged<int> onChanged;
 
   const DurationPicker({
-    super.key,
-    required this.initialSeconds,
-    required this.onChanged,
+    required this.initialSeconds, required this.onChanged, super.key,
   });
+  final int initialSeconds;
+  final ValueChanged<int> onChanged;
 
   @override
   State<DurationPicker> createState() => _DurationPickerState();
@@ -84,8 +82,8 @@ class _DurationPickerState extends State<DurationPicker> {
 
 /// Formatter that prevents values above a maximum.
 class _MaxValueFormatter extends TextInputFormatter {
-  final int max;
   _MaxValueFormatter(this.max);
+  final int max;
 
   @override
   TextEditingValue formatEditUpdate(

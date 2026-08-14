@@ -8,7 +8,6 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor: _seedColor,
-        brightness: Brightness.light,
       ),
       inputDecorationTheme: const InputDecorationTheme(
         border: OutlineInputBorder(),

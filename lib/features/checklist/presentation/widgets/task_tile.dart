@@ -3,18 +3,16 @@ import 'package:recur/core/utils/duration_formatter.dart';
 import 'package:recur/features/checklist/data/models/task_model.dart';
 
 class TaskTile extends StatelessWidget {
+
+  const TaskTile({
+    required this.task, required this.index, super.key,
+    this.onTap,
+    this.onDelete,
+  });
   final TaskModel task;
   final int index;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
-
-  const TaskTile({
-    super.key,
-    required this.task,
-    required this.index,
-    this.onTap,
-    this.onDelete,
-  });
 
   @override
   Widget build(BuildContext context) {

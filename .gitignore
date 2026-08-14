@@ -46,3 +46,7 @@ app.*.map.json
 
 bash.exe.stackdump
 recur.jks
+
+# Generated files
+**/*.g.dart
+**/*.freezed.dart

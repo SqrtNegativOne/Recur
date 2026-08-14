@@ -6,7 +6,7 @@ String toSlug(String name) {
       .trim()
       .replaceAll(RegExp(r'[^a-z0-9\s-]'), '')
       .replaceAll(RegExp(r'[\s]+'), '-')
-      .replaceAll(RegExp(r'-+'), '-')
+      .replaceAll(RegExp('-+'), '-')
       .replaceAll(RegExp(r'^-|-$'), '');
 }
 

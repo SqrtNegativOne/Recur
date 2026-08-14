@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
@@ -34,7 +35,7 @@ class _OverlayAppState extends State<_OverlayApp> {
     FlutterOverlayWindow.overlayListener.listen((data) {
       if (data is! Map) return;
       if (data['action'] == 'close') {
-        FlutterOverlayWindow.closeOverlay();
+        unawaited(FlutterOverlayWindow.closeOverlay());
         return;
       }
       setState(() {
@@ -73,7 +74,6 @@ class _OverlayAppState extends State<_OverlayApp> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   '$_taskIndex / $_totalTasks',
