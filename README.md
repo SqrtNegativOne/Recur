@@ -15,34 +15,18 @@ A Routinery-inspired checklist timer app for **Windows** and **Android**. Create
 - **Theming** — Light, dark, or system theme
 - **Tasker integration** — Launch any checklist run via deep link (`recur:///run/<id>`)
 
-## Platforms
-
-| Platform | Status |
-|----------|--------|
-| Windows  | ✅ Primary target |
-| Android  | ✅ Supported |
-
 ## Getting Started
-
-### Prerequisites
-
-- Flutter SDK ≥ 3.7.0 (Dart SDK ≥ 3.7.0)
-- For Windows builds: Visual Studio with "Desktop development with C++" workload
-
-### Install dependencies
-
+Install dependencies
 ```powershell
 flutter pub get
 ```
 
-### Run code generation (required after modifying models/providers)
-
+Run code generation (required after modifying models/providers)
 ```powershell
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-### Launch
-
+Launch
 ```powershell
 # Windows (no code generation)
 ./run.ps1
@@ -56,8 +40,7 @@ flutter run -d windows
 flutter run -d android
 ```
 
-### Build release
-
+Build release
 ```powershell
 # Windows
 flutter build windows --release
