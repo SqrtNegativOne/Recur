@@ -1,16 +1,15 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recur/features/runner/data/models/run_record.dart';
 import 'package:recur/features/runner/data/repositories/run_history_repository.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final runHistoryRepositoryProvider =
-    Provider<RunHistoryRepository>((ref) => RunHistoryRepository());
+part 'run_history_provider.g.dart';
+
+@Riverpod(keepAlive: true)
+RunHistoryRepository runHistoryRepository(Ref ref) => RunHistoryRepository();
 
 /// Provides the full list of run records (newest first).
-final runHistoryProvider =
-    AsyncNotifierProvider<RunHistoryNotifier, List<RunRecord>>(
-        RunHistoryNotifier.new);
-
-class RunHistoryNotifier extends AsyncNotifier<List<RunRecord>> {
+@Riverpod(keepAlive: true)
+class RunHistory extends _$RunHistory {
   @override
   Future<List<RunRecord>> build() async {
     final repo = ref.read(runHistoryRepositoryProvider);
@@ -26,9 +25,8 @@ class RunHistoryNotifier extends AsyncNotifier<List<RunRecord>> {
 }
 
 /// Provides run records filtered by checklist ID.
-// ignore: specify_nonobvious_property_types
-final checklistHistoryProvider =
-    FutureProvider.family<List<RunRecord>, String>((ref, checklistId) async {
+@Riverpod(keepAlive: true)
+Future<List<RunRecord>> checklistHistory(Ref ref, String checklistId) async {
   final repo = ref.read(runHistoryRepositoryProvider);
   return repo.loadForChecklist(checklistId);
-});
+}

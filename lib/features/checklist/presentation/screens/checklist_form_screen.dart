@@ -20,7 +20,6 @@ const _colorOptions = [
 ];
 
 class ChecklistFormScreen extends ConsumerStatefulWidget {
-
   const ChecklistFormScreen({super.key, this.checklistId});
   final String? checklistId;
 
@@ -69,8 +68,9 @@ class _ChecklistFormScreenState extends ConsumerState<ChecklistFormScreen> {
   Widget build(BuildContext context) {
     // If editing, load existing data
     if (_isEditing) {
-      final detailAsync =
-          ref.watch(checklistDetailProvider(widget.checklistId!));
+      final detailAsync = ref.watch(
+        checklistDetailProvider(widget.checklistId!),
+      );
       return detailAsync.when(
         loading: () => const Scaffold(
           body: Center(child: CircularProgressIndicator()),
@@ -144,7 +144,8 @@ class _ChecklistFormScreenState extends ConsumerState<ChecklistFormScreen> {
                       border: isSelected
                           ? Border.all(
                               color: Theme.of(context).colorScheme.outline,
-                              width: 3)
+                              width: 3,
+                            )
                           : null,
                     ),
                     child: isSelected
@@ -157,8 +158,9 @@ class _ChecklistFormScreenState extends ConsumerState<ChecklistFormScreen> {
             const SizedBox(height: 24),
             SwitchListTile(
               title: const Text('Auto-advance'),
-              subtitle:
-                  const Text('Automatically move to next task when timer ends'),
+              subtitle: const Text(
+                'Automatically move to next task when timer ends',
+              ),
               value: _autoAdvance,
               onChanged: (v) => setState(() => _autoAdvance = v),
             ),
@@ -171,8 +173,12 @@ class _ChecklistFormScreenState extends ConsumerState<ChecklistFormScreen> {
                     DropdownButton<int>(
                       value: _autoAdvanceDelay,
                       items: [1, 2, 3, 5, 10]
-                          .map((s) => DropdownMenuItem(
-                              value: s, child: Text('${s}s')))
+                          .map(
+                            (s) => DropdownMenuItem(
+                              value: s,
+                              child: Text('${s}s'),
+                            ),
+                          )
                           .toList(),
                       onChanged: (v) {
                         if (v != null) setState(() => _autoAdvanceDelay = v);
@@ -209,20 +215,23 @@ class _ChecklistFormScreenState extends ConsumerState<ChecklistFormScreen> {
       final repo = await ref.read(checklistRepositoryProvider.future);
       final now = DateTime.now();
 
-      final checklist = (existing ?? ChecklistModel(
-        id: const Uuid().v4(),
-        name: '',
-        createdAt: now,
-        updatedAt: now,
-      )).copyWith(
-        name: _nameController.text.trim(),
-        description: _descriptionController.text.trim(),
-        color: _selectedColor,
-        settings: ChecklistSettings(
-          autoAdvance: _autoAdvance,
-          autoAdvanceDelaySeconds: _autoAdvanceDelay,
-        ),
-      );
+      final checklist =
+          (existing ??
+                  ChecklistModel(
+                    id: const Uuid().v4(),
+                    name: '',
+                    createdAt: now,
+                    updatedAt: now,
+                  ))
+              .copyWith(
+                name: _nameController.text.trim(),
+                description: _descriptionController.text.trim(),
+                color: _selectedColor,
+                settings: ChecklistSettings(
+                  autoAdvance: _autoAdvance,
+                  autoAdvanceDelaySeconds: _autoAdvanceDelay,
+                ),
+              );
 
       await repo.save(checklist);
       ref

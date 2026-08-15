@@ -5,7 +5,6 @@ import 'package:recur/core/utils/duration_formatter.dart';
 import 'package:recur/features/runner/providers/run_session_provider.dart';
 
 class RunCompleteScreen extends ConsumerWidget {
-
   const RunCompleteScreen({required this.checklistId, super.key});
   final String checklistId;
 
@@ -112,9 +111,11 @@ class RunCompleteScreen extends ConsumerWidget {
                               ),
                               const SizedBox(width: 8),
                               Expanded(
-                                  child: Text(
-                                      task?.name ?? 'Task ${i + 1}',
-                                      style: theme.textTheme.bodyMedium)),
+                                child: Text(
+                                  task?.name ?? 'Task ${i + 1}',
+                                  style: theme.textTheme.bodyMedium,
+                                ),
+                              ),
                               Text(
                                 '${formatDurationHuman(actual)} / ${formatDurationHuman(planned)}',
                                 style: theme.textTheme.bodySmall,
@@ -161,7 +162,6 @@ class RunCompleteScreen extends ConsumerWidget {
 }
 
 class _StatColumn extends StatelessWidget {
-
   const _StatColumn({
     required this.label,
     required this.value,
@@ -178,9 +178,12 @@ class _StatColumn extends StatelessWidget {
       children: [
         Icon(icon, color: theme.colorScheme.primary),
         const SizedBox(height: 4),
-        Text(value,
-            style: theme.textTheme.titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold)),
+        Text(
+          value,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         Text(label, style: theme.textTheme.labelSmall),
       ],
     );
@@ -189,7 +192,6 @@ class _StatColumn extends StatelessWidget {
 
 /// Shows whether the user finished faster or slower than planned.
 class _PaceIndicator extends StatelessWidget {
-
   const _PaceIndicator({
     required this.actualSeconds,
     required this.plannedSeconds,

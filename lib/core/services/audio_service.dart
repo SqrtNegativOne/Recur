@@ -3,15 +3,18 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final audioServiceProvider = Provider<AudioService>((ref) {
+part 'audio_service.g.dart';
+
+@Riverpod(keepAlive: true)
+AudioService audioService(Ref ref) {
   final service = AudioService();
   ref.onDispose(service.dispose);
   return service;
-});
+}
 
 /// Handles notification sounds and text-to-speech for the run session.
 ///
@@ -155,9 +158,13 @@ class AudioService {
           envelope = (numSamples - i) / fadeOut;
         }
         final sample =
-            (sin(2 * pi * frequency * i / sampleRate) * 32767 * 0.4 * envelope).toInt();
+            (sin(2 * pi * frequency * i / sampleRate) * 32767 * 0.4 * envelope)
+                .toInt();
         buffer.setInt16(
-            44 + sampleIndex * 2, sample.clamp(-32768, 32767), Endian.little);
+          44 + sampleIndex * 2,
+          sample.clamp(-32768, 32767),
+          Endian.little,
+        );
         sampleIndex++;
       }
     }

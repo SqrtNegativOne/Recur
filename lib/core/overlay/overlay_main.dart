@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
+import 'package:recur/core/utils/logger.dart';
 
 /// Entry point for the floating overlay widget.
 ///
@@ -11,6 +13,26 @@ import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 @pragma('vm:entry-point')
 void overlayMain() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Log Flutter framework errors in the overlay isolate
+  FlutterError.onError = (details) {
+    logger.e(
+      'FlutterError caught by global error handler (Overlay)',
+      error: details.exception,
+      stackTrace: details.stack,
+    );
+  };
+
+  // Log all other Dart/async errors in the overlay isolate
+  PlatformDispatcher.instance.onError = (error, stack) {
+    logger.e(
+      'PlatformDispatcherError caught by global error handler (Overlay)',
+      error: error,
+      stackTrace: stack,
+    );
+    return true; // Prevent hard crashes
+  };
+
   runApp(const _OverlayApp());
 }
 
@@ -40,7 +62,8 @@ class _OverlayAppState extends State<_OverlayApp> {
       }
       setState(() {
         _taskName = (data['taskName'] as String?) ?? _taskName;
-        _remainingSeconds = (data['remainingSeconds'] as int?) ?? _remainingSeconds;
+        _remainingSeconds =
+            (data['remainingSeconds'] as int?) ?? _remainingSeconds;
         _isOvertime = (data['isOvertime'] as bool?) ?? _isOvertime;
         _taskIndex = (data['taskIndex'] as int?) ?? _taskIndex;
         _totalTasks = (data['totalTasks'] as int?) ?? _totalTasks;

@@ -12,7 +12,6 @@ import 'package:recur/features/runner/providers/run_session_provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 class RunScreen extends ConsumerStatefulWidget {
-
   const RunScreen({required this.checklistId, super.key});
   final String checklistId;
 
@@ -75,8 +74,9 @@ class _RunScreenState extends ConsumerState<RunScreen>
 
     // First build: load checklist and start
     if (!_started) {
-      final detailAsync =
-          ref.watch(checklistDetailProvider(widget.checklistId));
+      final detailAsync = ref.watch(
+        checklistDetailProvider(widget.checklistId),
+      );
       return detailAsync.when(
         loading: () => const Scaffold(
           body: Center(child: CircularProgressIndicator()),
@@ -171,8 +171,11 @@ class _RunScreenState extends ConsumerState<RunScreen>
                   if (isTransitioning)
                     Column(
                       children: [
-                        const Icon(Icons.check_circle,
-                            size: 80, color: Colors.green),
+                        const Icon(
+                          Icons.check_circle,
+                          size: 80,
+                          color: Colors.green,
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           'Next task...',
@@ -212,25 +215,27 @@ class _RunScreenState extends ConsumerState<RunScreen>
   }
 
   void _confirmStop(BuildContext context) {
-    unawaited(showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Stop routine?'),
-        content: const Text('Your progress will not be saved.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Continue'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              ref.read(runSessionProvider.notifier).stop();
-            },
-            child: const Text('Stop'),
-          ),
-        ],
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Stop routine?'),
+          content: const Text('Your progress will not be saved.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Continue'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                ref.read(runSessionProvider.notifier).stop();
+              },
+              child: const Text('Stop'),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }

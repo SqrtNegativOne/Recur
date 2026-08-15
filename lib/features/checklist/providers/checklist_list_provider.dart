@@ -1,22 +1,23 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:recur/features/checklist/data/models/checklist_model.dart';
 import 'package:recur/features/checklist/data/repositories/checklist_repository.dart';
 import 'package:recur/features/settings/providers/settings_provider.dart';
 import 'package:recur/features/settings/providers/storage_path_provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final checklistRepositoryProvider = FutureProvider<ChecklistRepository>((ref) async {
+part 'checklist_list_provider.g.dart';
+
+@Riverpod(keepAlive: true)
+Future<ChecklistRepository> checklistRepository(Ref ref) async {
   final settings = await ref.watch(settingsProvider.future);
   final dir = await resolveStorageDirectory(settings.storageFolderPath);
   return ChecklistRepository(dir);
-});
+}
 
-final checklistListProvider =
-    AsyncNotifierProvider<ChecklistListNotifier, List<ChecklistModel>>(
-        ChecklistListNotifier.new);
-
-class ChecklistListNotifier extends AsyncNotifier<List<ChecklistModel>> {
+@Riverpod(keepAlive: true)
+class ChecklistList extends _$ChecklistList {
   StreamSubscription<FileSystemEvent>? _watchSub;
 
   @override

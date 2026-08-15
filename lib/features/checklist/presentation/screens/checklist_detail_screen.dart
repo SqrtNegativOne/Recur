@@ -13,7 +13,6 @@ import 'package:recur/features/checklist/providers/checklist_detail_provider.dar
 import 'package:recur/features/checklist/providers/checklist_list_provider.dart';
 
 class ChecklistDetailScreen extends ConsumerWidget {
-
   const ChecklistDetailScreen({required this.checklistId, super.key});
   final String checklistId;
 
@@ -43,7 +42,6 @@ class ChecklistDetailScreen extends ConsumerWidget {
 }
 
 class _DetailContent extends ConsumerWidget {
-
   const _DetailContent({required this.checklist});
   final ChecklistModel checklist;
 
@@ -57,129 +55,135 @@ class _DetailContent extends ConsumerWidget {
         if (!didPop) context.go('/');
       },
       child: Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/'),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.go('/'),
+          ),
+          title: Text(checklist.name),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () => context.push('/checklist/${checklist.id}/edit'),
+              tooltip: 'Edit checklist',
+            ),
+            IconButton(
+              icon: const Icon(Icons.history),
+              tooltip: 'Run History',
+              onPressed: () => context.push(
+                '/checklist/${checklist.id}/history?name=${Uri.encodeComponent(checklist.name)}',
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.download),
+              tooltip: 'Export as JSON',
+              onPressed: () => _exportJson(context),
+            ),
+            IconButton(
+              icon: const Icon(Icons.link),
+              tooltip: 'Copy Tasker URL',
+              onPressed: () => _copyTaskerUrl(context),
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              onPressed: () => _confirmDelete(context, ref),
+              tooltip: 'Delete checklist',
+            ),
+          ],
         ),
-        title: Text(checklist.name),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () => context.push('/checklist/${checklist.id}/edit'),
-            tooltip: 'Edit checklist',
-          ),
-          IconButton(
-            icon: const Icon(Icons.history),
-            tooltip: 'Run History',
-            onPressed: () => context.push(
-                '/checklist/${checklist.id}/history?name=${Uri.encodeComponent(checklist.name)}'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.download),
-            tooltip: 'Export as JSON',
-            onPressed: () => _exportJson(context),
-          ),
-          IconButton(
-            icon: const Icon(Icons.link),
-            tooltip: 'Copy Tasker URL',
-            onPressed: () => _copyTaskerUrl(context),
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete_outline),
-            onPressed: () => _confirmDelete(context, ref),
-            tooltip: 'Delete checklist',
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Summary bar
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            color: theme.colorScheme.surfaceContainerHighest,
-            child: Row(
-              children: [
-                Icon(Icons.task_alt, color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
-                Text('${checklist.tasks.length} tasks'),
-                const SizedBox(width: 24),
-                Icon(Icons.timer_outlined, color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(formatDurationHuman(checklist.totalDuration)),
-                if (checklist.settings.autoAdvance) ...[
-                  const SizedBox(width: 24),
-                  Icon(Icons.skip_next, color: theme.colorScheme.primary),
+        body: Column(
+          children: [
+            // Summary bar
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              color: theme.colorScheme.surfaceContainerHighest,
+              child: Row(
+                children: [
+                  Icon(Icons.task_alt, color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
-                  const Text('Auto-advance'),
+                  Text('${checklist.tasks.length} tasks'),
+                  const SizedBox(width: 24),
+                  Icon(Icons.timer_outlined, color: theme.colorScheme.primary),
+                  const SizedBox(width: 8),
+                  Text(formatDurationHuman(checklist.totalDuration)),
+                  if (checklist.settings.autoAdvance) ...[
+                    const SizedBox(width: 24),
+                    Icon(Icons.skip_next, color: theme.colorScheme.primary),
+                    const SizedBox(width: 8),
+                    const Text('Auto-advance'),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-          // Task list
-          Expanded(
-            child: checklist.tasks.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.add_task,
-                            size: 48, color: theme.colorScheme.outline),
-                        const SizedBox(height: 16),
-                        const Text('No tasks yet'),
-                        const SizedBox(height: 8),
-                        const Text('Add tasks to build your routine'),
-                      ],
+            // Task list
+            Expanded(
+              child: checklist.tasks.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.add_task,
+                            size: 48,
+                            color: theme.colorScheme.outline,
+                          ),
+                          const SizedBox(height: 16),
+                          const Text('No tasks yet'),
+                          const SizedBox(height: 8),
+                          const Text('Add tasks to build your routine'),
+                        ],
+                      ),
+                    )
+                  : ReorderableListView.builder(
+                      padding: const EdgeInsets.only(bottom: 80),
+                      itemCount: checklist.tasks.length,
+                      onReorder: (oldIndex, newIndex) =>
+                          _reorderTasks(ref, oldIndex, newIndex),
+                      itemBuilder: (context, index) {
+                        final task = checklist.tasks[index];
+                        return TaskTile(
+                          key: ValueKey(task.id),
+                          task: task,
+                          index: index,
+                          onTap: () => context.push(
+                            '/checklist/${checklist.id}/task/${task.id}/edit',
+                          ),
+                          onDelete: () => _deleteTask(ref, index),
+                        );
+                      },
                     ),
-                  )
-                : ReorderableListView.builder(
-                    padding: const EdgeInsets.only(bottom: 80),
-                    itemCount: checklist.tasks.length,
-                    onReorder: (oldIndex, newIndex) =>
-                        _reorderTasks(ref, oldIndex, newIndex),
-                    itemBuilder: (context, index) {
-                      final task = checklist.tasks[index];
-                      return TaskTile(
-                        key: ValueKey(task.id),
-                        task: task,
-                        index: index,
-                        onTap: () => context.push(
-                            '/checklist/${checklist.id}/task/${task.id}/edit'),
-                        onDelete: () => _deleteTask(ref, index),
-                      );
-                    },
-                  ),
-          ),
-        ],
-      ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (checklist.tasks.isNotEmpty)
-            FloatingActionButton.extended(
-              heroTag: 'play',
-              onPressed: () =>
-                  context.push('/checklist/${checklist.id}/run'),
-              icon: const Icon(Icons.play_arrow),
-              label: const Text('Start'),
             ),
-          const SizedBox(height: 12),
-          FloatingActionButton(
-            heroTag: 'add',
-            onPressed: () =>
-                context.push('/checklist/${checklist.id}/task/new'),
-            tooltip: 'Add task',
-            child: const Icon(Icons.add),
-          ),
-        ],
-      ),
+          ],
+        ),
+        floatingActionButton: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (checklist.tasks.isNotEmpty)
+              FloatingActionButton.extended(
+                heroTag: 'play',
+                onPressed: () => context.push('/checklist/${checklist.id}/run'),
+                icon: const Icon(Icons.play_arrow),
+                label: const Text('Start'),
+              ),
+            const SizedBox(height: 12),
+            FloatingActionButton(
+              heroTag: 'add',
+              onPressed: () =>
+                  context.push('/checklist/${checklist.id}/task/new'),
+              tooltip: 'Add task',
+              child: const Icon(Icons.add),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Future<void> _exportJson(BuildContext context) async {
-    final jsonStr = const JsonEncoder.withIndent('  ').convert(checklist.toJson());
+    final jsonStr = const JsonEncoder.withIndent(
+      '  ',
+    ).convert(checklist.toJson());
     final savePath = await FilePicker.saveFile(
       dialogTitle: 'Export checklist',
       fileName: checklist.fileName,
@@ -190,7 +194,9 @@ class _DetailContent extends ConsumerWidget {
     if (savePath == null) return;
 
     try {
-      final path = (savePath is String ? savePath : (savePath as dynamic).path) as String;
+      final path =
+          (savePath is String ? savePath : (savePath as dynamic).path)
+              as String;
       await File(path).writeAsString(jsonStr);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -265,7 +271,9 @@ class _DetailContent extends ConsumerWidget {
       ),
     );
     if (confirmed == true && context.mounted) {
-      await ref.read(checklistListProvider.notifier).deleteChecklist(checklist.id);
+      await ref
+          .read(checklistListProvider.notifier)
+          .deleteChecklist(checklist.id);
       if (context.mounted) context.go('/');
     }
   }

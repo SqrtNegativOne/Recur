@@ -8,7 +8,6 @@ enum RunPhase { idle, running, paused, transitioning, allComplete }
 
 @freezed
 abstract class RunState with _$RunState {
-
   const factory RunState({
     required ChecklistModel checklist,
     @Default(0) int currentTaskIndex,

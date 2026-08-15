@@ -12,7 +12,7 @@ void main() {
     addTearDown(container.dispose);
 
     final notifier = container.read(runSessionProvider.notifier);
-    
+
     final checklist = ChecklistModel(
       id: 'test_id',
       name: 'Test Checklist',
@@ -22,9 +22,9 @@ void main() {
         const TaskModel(id: 't1', name: 'Task 1', durationSeconds: 60),
       ],
     );
-    
+
     notifier.start(checklist);
-    
+
     final state = container.read(runSessionProvider);
     expect(state, isNotNull);
     expect(state!.phase, RunPhase.running);
@@ -47,14 +47,14 @@ void main() {
         const TaskModel(id: 't1', name: 'Task 1', durationSeconds: 60),
       ],
     );
-    
+
     notifier
       ..start(checklist)
       ..pause();
-    
+
     final pausedState = container.read(runSessionProvider);
     expect(pausedState!.phase, RunPhase.paused);
-    
+
     notifier.resume();
     final resumedState = container.read(runSessionProvider);
     expect(resumedState!.phase, RunPhase.running);

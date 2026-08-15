@@ -8,10 +8,12 @@ part 'checklist_model.g.dart';
 
 @freezed
 abstract class ChecklistModel with _$ChecklistModel {
-
   const factory ChecklistModel({
     required String id,
-    required String name, required DateTime createdAt, required DateTime updatedAt, @Default(1) int version,
+    required String name,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    @Default(1) int version,
     @Default('') String description,
     @Default('checklist') String icon,
     @Default('#6750A4') String color,

@@ -47,7 +47,8 @@ class ChecklistListScreen extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-              'Imported $imported checklist${imported == 1 ? '' : 's'} successfully'),
+            'Imported $imported checklist${imported == 1 ? '' : 's'} successfully',
+          ),
         ),
       );
     }
@@ -66,10 +67,9 @@ class ChecklistListScreen extends ConsumerWidget {
             const Text('Recur'),
             Text(
               greeting,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -99,8 +99,10 @@ class ChecklistListScreen extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 48),
               const SizedBox(height: 16),
-              Text('Error loading checklists:\n$err',
-                  textAlign: TextAlign.center),
+              Text(
+                'Error loading checklists:\n$err',
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: () =>
@@ -116,9 +118,11 @@ class ChecklistListScreen extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.checklist,
-                      size: 64,
-                      color: Theme.of(context).colorScheme.outline),
+                  Icon(
+                    Icons.checklist,
+                    size: 64,
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     'No checklists yet',
@@ -140,8 +144,8 @@ class ChecklistListScreen extends ConsumerWidget {
               final crossAxisCount = constraints.maxWidth > 900
                   ? 3
                   : constraints.maxWidth > 500
-                      ? 2
-                      : 1;
+                  ? 2
+                  : 1;
 
               return GridView.builder(
                 padding: const EdgeInsets.all(16),

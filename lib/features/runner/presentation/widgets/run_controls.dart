@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class RunControls extends StatelessWidget {
-
   const RunControls({
-    required this.isPaused, required this.onPauseResume, required this.onSkip, super.key,
+    required this.isPaused,
+    required this.onPauseResume,
+    required this.onSkip,
+    super.key,
   });
   final bool isPaused;
   final VoidCallback onPauseResume;

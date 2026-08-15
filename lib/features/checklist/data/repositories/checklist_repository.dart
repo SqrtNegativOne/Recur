@@ -6,7 +6,6 @@ import 'package:recur/core/utils/logger.dart';
 import 'package:recur/features/checklist/data/models/checklist_model.dart';
 
 class ChecklistRepository {
-
   ChecklistRepository(this.storageDir);
   final Directory storageDir;
 
@@ -23,7 +22,11 @@ class ChecklistRepository {
           final json = jsonDecode(content) as Map<String, dynamic>;
           checklists.add(ChecklistModel.fromJson(json));
         } on Object catch (e, stack) {
-          logger.e('Failed to parse checklist file: ${entity.path}', error: e, stackTrace: stack);
+          logger.e(
+            'Failed to parse checklist file: ${entity.path}',
+            error: e,
+            stackTrace: stack,
+          );
         }
       }
     }

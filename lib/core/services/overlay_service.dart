@@ -3,13 +3,16 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final overlayServiceProvider = Provider<OverlayService>((ref) {
+part 'overlay_service.g.dart';
+
+@Riverpod(keepAlive: true)
+OverlayService overlayService(Ref ref) {
   final service = OverlayService().._init();
   ref.onDispose(service.dispose);
   return service;
-});
+}
 
 /// Manages the floating timer overlay on Android.
 ///
@@ -79,13 +82,15 @@ class OverlayService {
     required int totalTasks,
   }) {
     if (!Platform.isAndroid || !_isActive) return;
-    unawaited(FlutterOverlayWindow.shareData({
-      'taskName': taskName,
-      'remainingSeconds': remainingSeconds,
-      'isOvertime': isOvertime,
-      'taskIndex': taskIndex,
-      'totalTasks': totalTasks,
-    }));
+    unawaited(
+      FlutterOverlayWindow.shareData({
+        'taskName': taskName,
+        'remainingSeconds': remainingSeconds,
+        'isOvertime': isOvertime,
+        'taskIndex': taskIndex,
+        'totalTasks': totalTasks,
+      }),
+    );
   }
 
   Future<void> _bringToFront() async {

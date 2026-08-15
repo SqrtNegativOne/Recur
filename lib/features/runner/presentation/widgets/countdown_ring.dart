@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:recur/core/utils/duration_formatter.dart';
 
 class CountdownRing extends StatelessWidget {
-
   const CountdownRing({
-    required this.remainingSeconds, required this.progress, super.key,
+    required this.remainingSeconds,
+    required this.progress,
+    super.key,
     this.isOvertime = false,
     this.isPaused = false,
   });
@@ -20,8 +21,8 @@ class CountdownRing extends StatelessWidget {
     final ringColor = isOvertime
         ? theme.colorScheme.error
         : isPaused
-            ? theme.colorScheme.outline
-            : theme.colorScheme.primary;
+        ? theme.colorScheme.outline
+        : theme.colorScheme.primary;
 
     return SizedBox(
       width: 240,
@@ -34,8 +35,7 @@ class CountdownRing extends StatelessWidget {
             painter: _RingPainter(
               progress: progress,
               color: ringColor,
-              backgroundColor:
-                  theme.colorScheme.surfaceContainerHighest,
+              backgroundColor: theme.colorScheme.surfaceContainerHighest,
               strokeWidth: 12,
             ),
           ),
@@ -67,7 +67,6 @@ class CountdownRing extends StatelessWidget {
 }
 
 class _RingPainter extends CustomPainter {
-
   _RingPainter({
     required this.progress,
     required this.color,

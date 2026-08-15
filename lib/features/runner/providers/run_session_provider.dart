@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:recur/core/services/audio_service.dart';
 import 'package:recur/core/services/overlay_service.dart';
 import 'package:recur/features/checklist/data/models/checklist_model.dart';
@@ -8,7 +8,10 @@ import 'package:recur/features/runner/data/models/run_record.dart';
 import 'package:recur/features/runner/data/models/run_state.dart';
 import 'package:recur/features/runner/providers/run_history_provider.dart';
 import 'package:recur/features/settings/providers/settings_provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
+
+part 'run_session_provider.g.dart';
 
 /// The run session provider manages the timer state machine for running
 /// a checklist. It handles start, pause, resume, skip, stop, and
@@ -19,11 +22,8 @@ import 'package:uuid/uuid.dart';
 /// - Speaking a TTS prompt ("Get X done in Y") when each task starts
 ///
 /// When a run completes, it saves a RunRecord to the history provider.
-final runSessionProvider = NotifierProvider<RunSessionNotifier, RunState?>(
-  RunSessionNotifier.new,
-);
-
-class RunSessionNotifier extends Notifier<RunState?> {
+@Riverpod(keepAlive: true)
+class RunSession extends _$RunSession {
   Timer? _timer;
   Timer? _transitionTimer;
 
@@ -229,8 +229,9 @@ class RunSessionNotifier extends Notifier<RunState?> {
       completedAt: DateTime.now(),
       taskCount: finalState.totalTaskCount,
       taskActualSeconds: taskTimes,
-      taskPlannedSeconds:
-          finalState.checklist.tasks.map((t) => t.durationSeconds).toList(),
+      taskPlannedSeconds: finalState.checklist.tasks
+          .map((t) => t.durationSeconds)
+          .toList(),
       taskNames: finalState.checklist.tasks.map((t) => t.name).toList(),
     );
     unawaited(ref.read(runHistoryProvider.notifier).addRecord(record));

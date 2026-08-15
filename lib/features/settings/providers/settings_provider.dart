@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recur/features/settings/data/models/app_settings.dart';
 import 'package:recur/features/settings/data/repositories/settings_repository.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final Provider<SettingsRepository> settingsRepositoryProvider = Provider((ref) => SettingsRepository());
+part 'settings_provider.g.dart';
 
-final settingsProvider =
-    AsyncNotifierProvider<SettingsNotifier, AppSettings>(SettingsNotifier.new);
+@Riverpod(keepAlive: true)
+SettingsRepository settingsRepository(Ref ref) => SettingsRepository();
 
-class SettingsNotifier extends AsyncNotifier<AppSettings> {
+@Riverpod(keepAlive: true)
+class Settings extends _$Settings {
   @override
   Future<AppSettings> build() async {
     final repo = ref.read(settingsRepositoryProvider);

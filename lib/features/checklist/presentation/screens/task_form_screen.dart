@@ -9,9 +9,9 @@ import 'package:recur/features/checklist/providers/checklist_list_provider.dart'
 import 'package:uuid/uuid.dart';
 
 class TaskFormScreen extends ConsumerStatefulWidget {
-
   const TaskFormScreen({
-    required this.checklistId, super.key,
+    required this.checklistId,
+    super.key,
     this.taskId,
   });
   final String checklistId;
@@ -55,8 +55,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final detailAsync =
-        ref.watch(checklistDetailProvider(widget.checklistId));
+    final detailAsync = ref.watch(checklistDetailProvider(widget.checklistId));
 
     return detailAsync.when(
       loading: () =>
@@ -116,8 +115,7 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
                   maxLines: 2,
                 ),
                 const SizedBox(height: 24),
-                Text('Duration',
-                    style: Theme.of(context).textTheme.titleSmall),
+                Text('Duration', style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
                 DurationPicker(
                   initialSeconds: _durationSeconds,

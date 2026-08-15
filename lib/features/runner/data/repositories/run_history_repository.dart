@@ -23,10 +23,11 @@ class RunHistoryRepository {
       if (!file.existsSync()) return [];
       final content = await file.readAsString();
       final list = jsonDecode(content) as List;
-      final records = list
-          .map((e) => RunRecord.fromJson(e as Map<String, dynamic>))
-          .toList()
-        ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
+      final records =
+          list
+              .map((e) => RunRecord.fromJson(e as Map<String, dynamic>))
+              .toList()
+            ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
       return records;
     } on Object {
       return [];

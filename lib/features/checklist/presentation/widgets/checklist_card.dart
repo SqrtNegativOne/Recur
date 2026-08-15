@@ -3,9 +3,10 @@ import 'package:recur/core/utils/duration_formatter.dart';
 import 'package:recur/features/checklist/data/models/checklist_model.dart';
 
 class ChecklistCard extends StatelessWidget {
-
   const ChecklistCard({
-    required this.checklist, required this.onTap, super.key,
+    required this.checklist,
+    required this.onTap,
+    super.key,
   });
   final ChecklistModel checklist;
   final VoidCallback onTap;
@@ -53,16 +54,22 @@ class ChecklistCard extends StatelessWidget {
               const Spacer(),
               Row(
                 children: [
-                  Icon(Icons.task_alt,
-                      size: 16, color: theme.colorScheme.outline),
+                  Icon(
+                    Icons.task_alt,
+                    size: 16,
+                    color: theme.colorScheme.outline,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     '${checklist.tasks.length} tasks',
                     style: theme.textTheme.labelSmall,
                   ),
                   const Spacer(),
-                  Icon(Icons.timer_outlined,
-                      size: 16, color: theme.colorScheme.outline),
+                  Icon(
+                    Icons.timer_outlined,
+                    size: 16,
+                    color: theme.colorScheme.outline,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     formatDurationHuman(checklist.totalDuration),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'time_theme_provider.g.dart';
 
 /// Returns light theme from 06:00–18:00, dark otherwise.
 ThemeMode themeForHour(int hour) =>
@@ -14,9 +16,10 @@ String greetingForHour(int hour) {
 }
 
 /// Emits the time-based ThemeMode and updates every minute.
-final timeBasedThemeModeProvider = StreamProvider<ThemeMode>((ref) async* {
+@Riverpod(keepAlive: true)
+Stream<ThemeMode> timeBasedThemeMode(Ref ref) async* {
   yield themeForHour(DateTime.now().hour);
   await for (final _ in Stream<void>.periodic(const Duration(minutes: 1))) {
     yield themeForHour(DateTime.now().hour);
   }
-});
+}

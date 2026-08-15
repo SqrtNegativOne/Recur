@@ -11,7 +11,6 @@ part 'run_record.g.dart';
 /// "you ran 20% faster than planned".
 @freezed
 abstract class RunRecord with _$RunRecord {
-
   const factory RunRecord({
     required String id,
     required String checklistId,
@@ -29,8 +28,7 @@ abstract class RunRecord with _$RunRecord {
       _$RunRecordFromJson(json);
 
   /// Total actual seconds across all tasks.
-  int get totalActualSeconds =>
-      taskActualSeconds.fold(0, (sum, s) => sum + s);
+  int get totalActualSeconds => taskActualSeconds.fold(0, (sum, s) => sum + s);
 
   /// Total planned seconds across all tasks.
   int get totalPlannedSeconds =>

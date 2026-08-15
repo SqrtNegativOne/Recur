@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 /// A row of dots showing position in a task sequence.
 class TaskProgressBar extends StatelessWidget {
-
   const TaskProgressBar({
-    required this.totalTasks, required this.currentTaskIndex, super.key,
+    required this.totalTasks,
+    required this.currentTaskIndex,
+    super.key,
   });
   final int totalTasks;
   final int currentTaskIndex;
@@ -29,8 +30,8 @@ class TaskProgressBar extends StatelessWidget {
               color: isComplete
                   ? theme.colorScheme.primary
                   : isCurrent
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.surfaceContainerHighest,
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(5),
             ),
           ),
