@@ -14,7 +14,7 @@ class RecurApp extends ConsumerWidget {
     final timeTheme = ref.watch(timeBasedThemeModeProvider);
 
     final resolvedTimeTheme =
-        timeTheme.valueOrNull ?? themeForHour(DateTime.now().hour);
+        timeTheme.value ?? themeForHour(DateTime.now().hour);
 
     final themeMode = settings.whenOrNull(
           data: (s) => s.themeMode == ThemeMode.system

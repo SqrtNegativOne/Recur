@@ -26,7 +26,8 @@ class RunHistoryNotifier extends AsyncNotifier<List<RunRecord>> {
 }
 
 /// Provides run records filtered by checklist ID.
-final FutureProviderFamily<List<RunRecord>, String> checklistHistoryProvider =
+// ignore: specify_nonobvious_property_types
+final checklistHistoryProvider =
     FutureProvider.family<List<RunRecord>, String>((ref, checklistId) async {
   final repo = ref.read(runHistoryRepositoryProvider);
   return repo.loadForChecklist(checklistId);

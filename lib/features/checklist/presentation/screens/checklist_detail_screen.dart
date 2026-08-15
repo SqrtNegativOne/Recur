@@ -179,17 +179,19 @@ class _DetailContent extends ConsumerWidget {
   }
 
   Future<void> _exportJson(BuildContext context) async {
-    final savePath = await FilePicker.platform.saveFile(
+    final jsonStr = const JsonEncoder.withIndent('  ').convert(checklist.toJson());
+    final savePath = await FilePicker.saveFile(
       dialogTitle: 'Export checklist',
       fileName: checklist.fileName,
       type: FileType.custom,
       allowedExtensions: ['json'],
+      bytes: Uint8List.fromList(utf8.encode(jsonStr)),
     );
     if (savePath == null) return;
 
     try {
-      final json = const JsonEncoder.withIndent('  ').convert(checklist.toJson());
-      await File(savePath).writeAsString(json);
+      final path = (savePath is String ? savePath : (savePath as dynamic).path) as String;
+      await File(path).writeAsString(jsonStr);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Exported successfully')),

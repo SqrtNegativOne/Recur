@@ -7,7 +7,7 @@ part 'run_state.freezed.dart';
 enum RunPhase { idle, running, paused, transitioning, allComplete }
 
 @freezed
-class RunState with _$RunState {
+abstract class RunState with _$RunState {
 
   const factory RunState({
     required ChecklistModel checklist,

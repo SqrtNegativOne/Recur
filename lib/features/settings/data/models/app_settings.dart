@@ -25,7 +25,7 @@ class ThemeModeConverter implements JsonConverter<ThemeMode, String> {
 }
 
 @freezed
-class AppSettings with _$AppSettings {
+abstract class AppSettings with _$AppSettings {
   const factory AppSettings({
     @Default('') String storageFolderPath,
     @ThemeModeConverter() @Default(ThemeMode.system) ThemeMode themeMode,

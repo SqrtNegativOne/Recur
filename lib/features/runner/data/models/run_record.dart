@@ -10,7 +10,7 @@ part 'run_record.g.dart';
 /// time spent per task and the planned duration, enabling stats like
 /// "you ran 20% faster than planned".
 @freezed
-class RunRecord with _$RunRecord {
+abstract class RunRecord with _$RunRecord {
 
   const factory RunRecord({
     required String id,

@@ -82,8 +82,9 @@ class _TaskFormScreenState extends ConsumerState<TaskFormScreen> {
               body: const Center(child: Text('Task not found')),
             );
           }
-          existingTask = matches.first;
-          _initFromTask(existingTask);
+          final t = matches.first;
+          existingTask = t;
+          _initFromTask(t);
         }
 
         return Scaffold(

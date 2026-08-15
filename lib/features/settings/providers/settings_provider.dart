@@ -17,7 +17,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
 
   Future<void> setStoragePath(String path) async {
     final repo = ref.read(settingsRepositoryProvider);
-    final current = state.valueOrNull ?? const AppSettings();
+    final current = state.value ?? const AppSettings();
     final updated = current.copyWith(storageFolderPath: path);
     await repo.save(updated);
     state = AsyncData(updated);
@@ -25,7 +25,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
 
   Future<void> setThemeMode(ThemeMode mode) async {
     final repo = ref.read(settingsRepositoryProvider);
-    final current = state.valueOrNull ?? const AppSettings();
+    final current = state.value ?? const AppSettings();
     final updated = current.copyWith(themeMode: mode);
     await repo.save(updated);
     state = AsyncData(updated);
@@ -33,7 +33,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
 
   Future<void> setSoundEnabled({required bool enabled}) async {
     final repo = ref.read(settingsRepositoryProvider);
-    final current = state.valueOrNull ?? const AppSettings();
+    final current = state.value ?? const AppSettings();
     final updated = current.copyWith(soundEnabled: enabled);
     await repo.save(updated);
     state = AsyncData(updated);
@@ -41,7 +41,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
 
   Future<void> setTtsEnabled({required bool enabled}) async {
     final repo = ref.read(settingsRepositoryProvider);
-    final current = state.valueOrNull ?? const AppSettings();
+    final current = state.value ?? const AppSettings();
     final updated = current.copyWith(ttsEnabled: enabled);
     await repo.save(updated);
     state = AsyncData(updated);

@@ -174,7 +174,7 @@ class RunSessionNotifier extends Notifier<RunState?> {
 
   /// Plays the timer-expired chime if sound is enabled in settings.
   void _playSound() {
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).value;
     if (settings?.soundEnabled ?? true) {
       unawaited(ref.read(audioServiceProvider).playTimerExpiredSound());
     }
@@ -182,7 +182,7 @@ class RunSessionNotifier extends Notifier<RunState?> {
 
   /// Speaks a task prompt via TTS if enabled in settings.
   void _speakTask(TaskModel task) {
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).value;
     if (settings?.ttsEnabled ?? false) {
       unawaited(
         ref
@@ -194,7 +194,7 @@ class RunSessionNotifier extends Notifier<RunState?> {
 
   /// Speaks a completion message via TTS if enabled.
   void _speakComplete() {
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).value;
     if (settings?.ttsEnabled ?? false) {
       unawaited(ref.read(audioServiceProvider).speakComplete());
     }

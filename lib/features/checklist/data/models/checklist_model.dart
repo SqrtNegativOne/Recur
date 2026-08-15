@@ -7,7 +7,7 @@ part 'checklist_model.freezed.dart';
 part 'checklist_model.g.dart';
 
 @freezed
-class ChecklistModel with _$ChecklistModel {
+abstract class ChecklistModel with _$ChecklistModel {
 
   const factory ChecklistModel({
     required String id,

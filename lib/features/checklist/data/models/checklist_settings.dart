@@ -4,7 +4,7 @@ part 'checklist_settings.freezed.dart';
 part 'checklist_settings.g.dart';
 
 @freezed
-class ChecklistSettings with _$ChecklistSettings {
+abstract class ChecklistSettings with _$ChecklistSettings {
   const factory ChecklistSettings({
     @Default(true) bool autoAdvance,
     @Default(3) int autoAdvanceDelaySeconds,

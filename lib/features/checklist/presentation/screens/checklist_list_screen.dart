@@ -10,17 +10,16 @@ class ChecklistListScreen extends ConsumerWidget {
   const ChecklistListScreen({super.key});
 
   Future<void> _importJson(BuildContext context, WidgetRef ref) async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['json'],
-      allowMultiple: true,
     );
-    if (result == null || result.files.isEmpty) return;
+    if (result.isEmpty) return;
 
     var imported = 0;
     final errors = <String>[];
 
-    for (final file in result.files) {
+    for (final file in result) {
       final path = file.path;
       if (path == null) continue;
       try {

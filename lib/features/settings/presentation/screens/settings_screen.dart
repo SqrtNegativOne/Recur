@@ -118,7 +118,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Future<void> _pickStorageFolder(BuildContext context, WidgetRef ref) async {
-    final result = await FilePicker.platform.getDirectoryPath(
+    final result = await FilePicker.getDirectoryPath(
       dialogTitle: 'Choose storage folder for checklists',
     );
     if (result != null) {
