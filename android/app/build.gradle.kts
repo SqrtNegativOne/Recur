@@ -14,10 +14,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-
-
-
-
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.recur.recur"
@@ -44,4 +40,8 @@ android {
 
 flutter {
     source = "../.."
+}
+
+kotlin {
+    jvmToolchain(21)
 }
