@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recur/core/utils/storage_access.dart';
 import 'package:recur/features/checklist/providers/checklist_list_provider.dart';
 import 'package:recur/features/settings/providers/settings_provider.dart';
 import 'package:recur/features/settings/providers/storage_path_provider.dart';
@@ -41,6 +44,11 @@ class SettingsScreen extends ConsumerWidget {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => _pickStorageFolder(context, ref),
               ),
+              // Scoped storage: only relevant when a custom folder in
+              // shared storage (e.g. a Syncthing sync target) is set.
+              if (Platform.isAndroid &&
+                  StorageAccess.needsAllFilesAccess(settings.storageFolderPath))
+                const _StorageAccessTile(),
               const Divider(),
               // Theme mode
               ListTile(
@@ -128,12 +136,78 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Future<void> _pickStorageFolder(BuildContext context, WidgetRef ref) async {
+    final messenger = ScaffoldMessenger.of(context);
     final result = await FilePicker.getDirectoryPath(
       dialogTitle: 'Choose storage folder for checklists',
     );
     if (result != null) {
       await ref.read(settingsProvider.notifier).setStoragePath(result);
       ref.invalidate(checklistListProvider);
+      if (StorageAccess.needsAllFilesAccess(result) &&
+          !await StorageAccess.isGranted()) {
+        messenger
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              duration: Duration(seconds: 6),
+              content: Text(
+                'This folder is in shared storage. Grant "All files access" '
+                'in Settings (below Storage Folder) to see checklists synced '
+                'here, e.g. via Syncthing.',
+              ),
+            ),
+          );
+      }
     }
+  }
+}
+
+/// Shows the Android "All files access" grant state for the current
+/// shared-storage folder and opens the system screen when tapped.
+class _StorageAccessTile extends ConsumerStatefulWidget {
+  const _StorageAccessTile();
+
+  @override
+  ConsumerState<_StorageAccessTile> createState() => _StorageAccessTileState();
+}
+
+class _StorageAccessTileState extends ConsumerState<_StorageAccessTile> {
+  bool? _granted;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(StorageAccess.isGranted().then(
+      (granted) {
+        if (mounted) setState(() => _granted = granted);
+      },
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final granted = _granted ?? false;
+    return ListTile(
+      leading: Icon(granted ? Icons.lock_open : Icons.lock_outline),
+      title: const Text('All files access'),
+      subtitle: Text(
+        granted
+            ? 'Granted. Files synced into this folder are visible.'
+            : 'Required on Android 11+ to see checklists synced into this '
+                'folder (e.g. via Syncthing). Tap to grant.',
+      ),
+      trailing: !granted ? const Icon(Icons.chevron_right) : null,
+      enabled: !granted,
+      onTap: granted
+          ? null
+          : () async {
+              final nowGranted = await StorageAccess.request();
+              if (!mounted) return;
+              setState(() => _granted = nowGranted);
+              if (nowGranted) {
+                ref.invalidate(checklistListProvider);
+              }
+            },
+    );
   }
 }
